@@ -1863,14 +1863,55 @@ void FreeEmsComms::fieldDescriptor(QString json)
 	for (int i=0;i<descriptorlist.size();i++)
 	{
 		QJsonObject itemmap = descriptorlist.at(i).toObject();
-		int id = itemmap.value("id").toInt();
-		int size = itemmap.value("size").toInt();
-		int issigned = itemmap.value("is_signed").toInt();
-		//int locid = itemmap.value("locationId").toInt();
+		int id = 0;
+		int size = 0;
+		int issigned = 0;
+		double mult = 0;
+		double adder = 0;
+
+		if (itemmap.value("id").isString())
+		{
+			id = itemmap.value("id").toString().toInt();
+		}
+		else
+		{
+			id = itemmap.value("id").toInt();
+		}
+		if (itemmap.value("size").isString())
+		{
+			size = itemmap.value("size").toString().toInt();
+		}
+		else
+		{
+			size = itemmap.value("size").toInt();
+		}
+		if (itemmap.value("is_signed").isString())
+		{
+			issigned = itemmap.value("is_signed").toString().toInt();
+		}
+		else
+		{
+			issigned = itemmap.value("is_signed").toInt();
+		}
+		if (itemmap.value("multiplier").isString())
+		{
+			mult = itemmap.value("multiplier").toString().toDouble();
+		}
+		else
+		{
+			mult = itemmap.value("multiplier").toDouble();
+		}
+		if (itemmap.value("adder").isString())
+		{
+			adder = itemmap.value("adder").toString().toDouble();
+		}
+		else
+		{
+			adder = itemmap.value("adder").toDouble();
+		}
+
 		QString name = itemmap.value("name").toString();
 		QString desc = itemmap.value("description").toString();
-		double mult = itemmap.value("multiplier").toString().toDouble();
-		double adder = itemmap.value("adder").toString().toDouble();
 		QString flags = itemmap.value("flags").toString();
 		QString suffix = itemmap.value("suffix").toString();
 
@@ -1915,29 +1956,44 @@ void FreeEmsComms::tableDescriptor(QString json)
 		QJsonObject itemmap = descriptorlist.at(i).toObject();
 		QString name = itemmap.value("name").toString();
 		QString desc = itemmap.value("description").toString();
-		if (itemmap.value("id").isString()) {
+		if (itemmap.value("id").isString())
+		{
 			id = itemmap.value("id").toString().toInt();
-		} else {
+		}
+		else
+		{
 			id = itemmap.value("id").toInt();
 		}
-		if (itemmap.value("format_id").isString()) {
+		if (itemmap.value("format_id").isString())
+		{
 			format_id = itemmap.value("format_id").toString().toInt();
-		} else {
+		}
+		else
+		{
 			format_id = itemmap.value("format_id").toInt();
 		}
-		if (itemmap.value("xAxisID").isString()) {
+		if (itemmap.value("xAxisID").isString())
+		{
 			xAxis_id = itemmap.value("xAxisID").toString().toInt();
-		} else {
+		}
+		else
+		{
 			xAxis_id = itemmap.value("xAxisID").toInt();
 		}
-		if (itemmap.value("yAxisID").isString()) {
+		if (itemmap.value("yAxisID").isString())
+		{
 			yAxis_id = itemmap.value("yAxisID").toString().toInt();
-		} else {
+		}
+		else
+		{
 			yAxis_id = itemmap.value("yAxisID").toInt();
 		}
-		if (itemmap.value("lookupID").isString()) {
+		if (itemmap.value("lookupID").isString())
+		{
 			zAxis_id = itemmap.value("lookupID").toString().toInt();
-		} else {
+		}
+		else
+		{
 			zAxis_id = itemmap.value("lookupID").toInt();
 		}
 
