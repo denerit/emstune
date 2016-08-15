@@ -85,7 +85,13 @@ int main(int argc, char *argv[])
 	logger.setLoggingLevel(QsLogging::TraceLevel);
 #ifdef Q_OS_WIN
 	QString appDataDir = QString(getenv("%USERPROFILE%")).replace("\\","/");
+	//XP uses %%'s, 7 does not seem to. TODO: Figure out what 10 uses.
+	if (appDataDir == "")
+	{
+		appDataDir = QString(getenv("USERPROFILE")).replace("\\","/");
+	}
 #else
+	//*nix is so much simpler.
 	QString appDataDir = getenv("HOME");
 #endif
 	QDir appDir(appDataDir);
