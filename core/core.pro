@@ -21,8 +21,8 @@ include(QsLog/QsLog.pri)
 
 win32 {
 	message("Building for win32")
-        DEFINES += GIT_COMMIT=$$system(\"c:/program files/git/bin/git.exe\" describe --dirty=-DEV --always)
-        DEFINES += GIT_HASH=$$system(\"c:/program files/git/bin/git.exe\" log -n 1 --pretty=format:%H)
+	DEFINES += GIT_COMMIT=$$system("c:/progra~1/git/bin/git.exe" describe --dirty=-DEV --always)
+	DEFINES += GIT_HASH=$$system("c:/progra~1/git/bin/git.exe" log -n 1 --pretty=format:%H)
 } else:mac {
 	QMAKE_CXXFLAGS += -Werror
 	INCLUDEPATH += /opt/local/include
@@ -101,7 +101,8 @@ SOURCES += src/main.cpp\
 	src/qcustomplot.cpp \
 	src/tableviewnew3d.cpp \
 	src/pluginmanager.cpp \
-    src/firmwaredebugview.cpp
+    src/firmwaredebugview.cpp \
+    emscore.cpp
 
 
 HEADERS  += src/mainwindow.h \
@@ -154,7 +155,8 @@ HEADERS  += src/mainwindow.h \
 	src/tableviewnew3d.h \
 	src/qcustomplot.h \
 	src/pluginmanager.h \
-    src/firmwaredebugview.h
+    src/firmwaredebugview.h \
+    emscore.h
 
 FORMS    += src/mainwindow.ui \
 	src/comsettings.ui \
