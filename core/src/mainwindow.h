@@ -89,7 +89,7 @@ public:
 	void setDevice(QString dev);
 
 	void connectToEms();
-	QString getSettingsFile() { return m_settingsFile; }
+	//QString getSettingsFile() { return m_settingsFile; }
 private:
 	void closeEvent(QCloseEvent *evt);
 	void loadWizards(QString dir);
@@ -160,10 +160,10 @@ private:
 	bool m_saveLogs;
 	bool m_clearLogs;
 	int m_logsToKeep;
-	QString m_settingsFile;
-	QString m_settingsDir;
-	QString m_defaultsDir;
-	QString m_localHomeDir;
+	//QString m_settingsFile;
+	//QString m_settingsDir;
+	//QString m_defaultsDir;
+	//QString m_localHomeDir;
 	QString m_logDirectory;
 	QString m_firmwareVersion;
 	QString m_interfaceVersion;

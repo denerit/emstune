@@ -31,6 +31,7 @@
 
 int main(int argc, char *argv[])
 {
-	EMSCore core(argc,argv);
-	return core.exec();
+	EMSCore::instance(argc,argv);
+	EMSCore::instance().run();
+	return EMSCore::instance().exec();
 }

@@ -36,6 +36,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include "pluginmanager.h"
+#include "emscore.h"
 #define define2string_p(x) #x
 #define define2string(x) define2string_p(x)
 
@@ -57,9 +58,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 	ramDiffWindow=0;
 	m_interrogationInProgress = false;
 	m_debugLogs = false;
-	emsSilenceTimer = new QTimer(this);
-	connect(emsSilenceTimer,SIGNAL(timeout()),this,SLOT(emsCommsSilenceTimerTick()));
-	emsSilenceTimer->start();
+
 
 //	emsData = new EmsData();
 //	connect(emsData,SIGNAL(updateRequired(unsigned short)),this,SLOT(updateDataWindows(unsigned short)));
@@ -67,67 +66,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 	//Create this, even though we only need it during offline to online transitions.
 //	checkEmsData = new EmsData();
 
-	m_settingsFile = "settings.ini";
-	//TODO: Figure out proper directory names
-#ifdef Q_OS_WIN
-	QString appDataDir = getenv("%AppData%");
-	if (appDataDir == "")
-	{
-		appDataDir = getenv("AppData");
-		if (appDataDir == "")
-		{
-			appDataDir = getenv("%UserProfile%");
-			if (appDataDir == "")
-			{
-				appDataDir = getenv("UserProfile");
-			}
-		}
-	}
-	appDataDir = appDataDir.replace("\\","/");
-	if (!QDir(appDataDir).exists("EMStudio"))
-	{
-		QDir(appDataDir).mkpath("EMStudio");
-	}
-	m_defaultsDir = QApplication::instance()->applicationDirPath();
 
-	m_settingsDir = appDataDir + "/" + "EMStudio";
-	//%HOMEPATH%//m_localHomeDir
-	m_localHomeDir = QString(getenv("%USERPROFILE%")).replace("\\","/");
-	if (m_localHomeDir == "")
-	{
-		m_localHomeDir = QString(getenv("USERPROFILE")).replace("\\","/");
-	}
-	m_localHomeDir += "/EMStudio";
-	//m_settingsFile = appDataDir + "/" + "EMStudio/EMStudio-config.ini";
-//#elif Q_OS_MAC //<- Does not exist. Need OSX checking capabilities somewhere...
-	//Linux and Mac function identically here for now...
-#else //if Q_OS_LINUX
-	QString appDataDir = getenv("HOME");
-	if (!QDir(appDataDir).exists(".EMStudio"))
-	{
-		QDir(appDataDir).mkpath(".EMStudio");
-	}
 
-	m_defaultsDir = QString(define2string(INSTALL_PREFIX)) + "/share/emstudio";
-	m_settingsDir = appDataDir + "/" + ".EMStudio";
-	m_localHomeDir = appDataDir + "/" + "EMStudio";
-	//m_settingsFile = appDataDir + "/" + ".EMStudio/EMStudio-config.ini";
-#endif
-	if (!QFile::exists(m_localHomeDir + "/logs"))
-	{
-		QDir(m_localHomeDir).mkpath(m_localHomeDir + "/logs");
-	}
-	//Settings file should ALWAYS be the one in the settings dir. No reason to have it anywhere else.
-	m_settingsFile = m_settingsDir + "/EMStudio-config.ini";
 
 	QString decoderfilestr = "";
-	if (QFile::exists(m_settingsDir + "/" + "definitions/decodersettings.json"))
+	if (QFile::exists(EMSCore::instance().getSettingsDirectory() + "/" + "definitions/decodersettings.json"))
 	{
-		decoderfilestr = m_settingsDir + "/" + "definitions/decodersettings.json";
+		decoderfilestr = EMSCore::instance().getSettingsDirectory() + "/" + "definitions/decodersettings.json";
 	}
-	else if (QFile::exists(m_defaultsDir + "/definitions/decodersettings.json"))
+	else if (QFile::exists(EMSCore::instance().getDefaultsDirectory() + "/definitions/decodersettings.json"))
 	{
-		decoderfilestr = m_defaultsDir + "/definitions/decodersettings.json";
+		decoderfilestr = EMSCore::instance().getDefaultsDirectory() + "/definitions/decodersettings.json";
 	}
 	else if (QFile::exists("decodersettings.json"))
 	{
@@ -278,12 +227,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
 	loadDashboards("src/");
 	loadDashboards(".");
-	loadDashboards(m_defaultsDir + "/" + "dashboards");
+	loadDashboards(EMSCore::instance().getDefaultsDirectory() + "/" + "dashboards");
 
-	if (QFile::exists(m_defaultsDir + "/" + "dashboards/gauges.qml"))
+	if (QFile::exists(EMSCore::instance().getDefaultsDirectory() + "/" + "dashboards/gauges.qml"))
 	{
 		//qml file is in the program files directory, or in /usr/share
-		dataGauges->setFile(m_defaultsDir + "/" + "dashboards/gauges.qml");
+		dataGauges->setFile(EMSCore::instance().getDefaultsDirectory() + "/" + "dashboards/gauges.qml");
 	}
 	else if (QFile::exists("src/gauges.qml"))
 	{
@@ -327,8 +276,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 	packetStatusMdiWindow->setWindowTitle(packetStatus->windowTitle());
 
 	//Load settings
-	QLOG_INFO() << "Local settings file is:" << m_settingsFile;
-	QSettings settings(m_settingsFile,QSettings::IniFormat);
+	//QLOG_INFO() << "Local settings file is:" << m_settingsFile;
+	QSettings settings(EMSCore::instance().getSettingsFile(),QSettings::IniFormat);
 	settings.beginGroup("comms");
 #if defined(Q_OS_WIN)
 	m_comPort = settings.value("port","COM4").toString();
@@ -342,7 +291,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 	m_saveLogs = settings.value("savelogs",true).toBool();
 	m_clearLogs = settings.value("clearlogs",false).toBool();
 	m_logsToKeep = settings.value("logstokeep",0).toInt();
-	m_logDirectory = settings.value("logdir",m_localHomeDir + "/logs").toString();
+	m_logDirectory = settings.value("logdir",EMSCore::instance().getHomeDirectory() + "/logs").toString();
 	m_debugLogs = settings.value("debuglogs",false).toBool();
 	settings.endGroup();
 
@@ -368,7 +317,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
 	//ui.menuWizards
 	connect(ui.mdiArea,SIGNAL(subWindowActivated(QMdiSubWindow*)),this,SLOT(subMdiWindowActivated(QMdiSubWindow*)));
-	QSettings windowsettings(m_settingsFile,QSettings::IniFormat);
+	QSettings windowsettings(EMSCore::instance().getSettingsFile(),QSettings::IniFormat);
 	windowsettings.beginGroup("general");
 	this->restoreGeometry(windowsettings.value("location").toByteArray());
 	if (windowsettings.value("isMaximized",false).toBool())
@@ -382,6 +331,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 	this->setAccessibleDescription("MainWindow");
 
 	ui.statusLabel->setText("<font bgcolor=\"#FF0000\">DISCONNECTED</font>");
+
+	emsSilenceTimer = new QTimer(this);
+	connect(emsSilenceTimer,SIGNAL(timeout()),this,SLOT(emsCommsSilenceTimerTick()));
+	emsSilenceTimer->start();
 
 
 }
@@ -730,7 +683,7 @@ void MainWindow::emsCommsDisconnected()
 void MainWindow::setPlugin(QString plugin)
 {
 	m_pluginFileName = plugin;
-	QSettings settings(getSettingsFile(),QSettings::IniFormat);
+	QSettings settings(EMSCore::instance().getSettingsFile(),QSettings::IniFormat);
 	settings.beginGroup("plugin");
 	QString savedPluginPath = settings.value("filename","").toString();
 	if (savedPluginPath != m_pluginFileName)
@@ -774,8 +727,8 @@ void MainWindow::setPlugin(QString plugin)
 	emsComms->passLogger(&QsLogging::Logger::instance());
 
 	QStringList searchpaths;
-	searchpaths.append(m_settingsDir + "/" + "definitions");
-	searchpaths.append(m_defaultsDir + "/definitions");
+	searchpaths.append(EMSCore::instance().getSettingsDirectory() + "/" + "definitions");
+	searchpaths.append(EMSCore::instance().getDefaultsDirectory() + "/definitions");
 	searchpaths.append("."); //Local
 	searchpaths.append("../../.."); //OSX local
 	m_memoryMetaData = emsComms->getMetaParser();
@@ -1170,7 +1123,7 @@ void MainWindow::settingsSaveClicked()
 	m_logDirectory = comSettingsWidget->getDataLogDir();
 
 	comSettingsWidget->hide();
-	QSettings settings(m_settingsFile,QSettings::IniFormat);
+	QSettings settings(EMSCore::instance().getSettingsFile(),QSettings::IniFormat);
 	settings.beginGroup("comms");
 	settings.setValue("port",m_comPort);
 	settings.setValue("baud",m_comBaud);
@@ -1586,7 +1539,7 @@ void MainWindow::interrogationComplete()
 		emsMdiWindow->show();
 	}
 	bool oneShown = false; //Check to see if at least one window is visisble.
-	QSettings windowsettings(m_settingsFile,QSettings::IniFormat);
+	QSettings windowsettings(EMSCore::instance().getSettingsFile(),QSettings::IniFormat);
 	QString compat = emsComms->getPluginCompat();
 	QString savecompat = windowsettings.value("plugincompat","").toString();
 	if (compat == savecompat && false)
@@ -2246,7 +2199,7 @@ void MainWindow::closeEvent(QCloseEvent *evt)
 
 	ParameterView *parameterView;
 	QMdiSubWindow *parameterMdiWindow;*/
-	QSettings windowsettings(m_settingsFile,QSettings::IniFormat);
+	QSettings windowsettings(EMSCore::instance().getSettingsFile(),QSettings::IniFormat);
 	windowsettings.beginWriteArray("rawwindows");
 	int val = 0;
 	for (QMap<unsigned short,QWidget*>::const_iterator i=m_rawDataView.constBegin();i!=m_rawDataView.constEnd();i++)

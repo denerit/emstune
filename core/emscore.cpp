@@ -7,15 +7,48 @@ EMSCore::EMSCore(int argc, char *argv[]) : QApplication(argc,argv)
 	QsLogging::Logger& logger = QsLogging::Logger::instance();
 	logger.setLoggingLevel(QsLogging::TraceLevel);
 #ifdef Q_OS_WIN
-	QString appDataDir = QString(getenv("%USERPROFILE%")).replace("\\","/");
+
 	//XP uses %%'s, 7 does not seem to. TODO: Figure out what 10 uses.
+	QString appDataDir = getenv("%AppData%");
 	if (appDataDir == "")
 	{
-		appDataDir = QString(getenv("USERPROFILE")).replace("\\","/");
+		appDataDir = getenv("AppData");
+		if (appDataDir == "")
+		{
+			appDataDir = getenv("%UserProfile%");
+			if (appDataDir == "")
+			{
+				appDataDir = getenv("UserProfile");
+			}
+		}
 	}
+	appDataDir = appDataDir.replace("\\","/");
+
+	if (!QDir(appDataDir).exists("EMStudio"))
+	{
+		QDir(appDataDir).mkpath("EMStudio");
+	}
+	m_defaultsDir = QApplication::instance()->applicationDirPath();
+
+	m_settingsDir = appDataDir + "/" + "EMStudio";
+	m_localHomeDir = QString(getenv("%USERPROFILE%")).replace("\\","/");
+	if (m_localHomeDir == "")
+	{
+		m_localHomeDir = QString(getenv("USERPROFILE")).replace("\\","/");
+	}
+	m_localHomeDir += "/EMStudio";
 #else
 	//*nix is so much simpler.
 	QString appDataDir = getenv("HOME");
+	if (!QDir(appDataDir).exists(".EMStudio"))
+	{
+		QDir(appDataDir).mkpath(".EMStudio");
+	}
+
+	m_defaultsDir = QString(define2string(INSTALL_PREFIX)) + "/share/emstudio";
+	m_settingsDir = appDataDir + "/" + ".EMStudio";
+	m_localHomeDir = appDataDir + "/" + "EMStudio";
+	//m_settingsFile = appDataDir + "/" + ".EMStudio/EMStudio-config.ini";
 #endif
 	QDir appDir(appDataDir);
 	if (appDir.exists())
@@ -34,6 +67,22 @@ EMSCore::EMSCore(int argc, char *argv[]) : QApplication(argc,argv)
 			appDir.mkdir("profiles");
 		}
 	}
+
+
+	m_settingsFile = "settings.ini";
+	//TODO: Figure out proper directory names
+
+
+	if (!QFile::exists(m_localHomeDir + "/logs"))
+	{
+		QDir(m_localHomeDir).mkpath(m_localHomeDir + "/logs");
+	}
+	//Settings file should ALWAYS be the one in the settings dir. No reason to have it anywhere else.
+	m_settingsFile = m_settingsDir + "/EMStudio-config.ini";
+
+
+
+
 	const QString sLogPath(QDir(appDataDir + "/EMStudio/applogs").filePath("log.txt"));
 
 	QsLogging::DestinationPtr fileDestination(QsLogging::DestinationFactory::MakeFileDestination(sLogPath, true, 0, 100));
@@ -76,13 +125,19 @@ EMSCore::EMSCore(int argc, char *argv[]) : QApplication(argc,argv)
 			QApplication::exit(0);
 		}
 	}
+	m_port = port;
+	m_plugin = plugin;
 
+
+}
+void EMSCore::run()
+{
 	mainWindow = new MainWindow();
-	if (port != "")
+	if (m_port != "")
 	{
-		mainWindow->setDevice(port);
+		mainWindow->setDevice(m_port);
 	}
-	if (plugin == "")
+	if (m_plugin == "")
 	{
 	//A specific plugin is specified, override the plugin manager's choice.
 	}
@@ -92,7 +147,8 @@ EMSCore::EMSCore(int argc, char *argv[]) : QApplication(argc,argv)
 	//	w->connectToEms();
 	//}
 
-	QSettings settings(mainWindow->getSettingsFile(),QSettings::IniFormat);
+
+	QSettings settings(getSettingsFile(),QSettings::IniFormat);
 	settings.beginGroup("plugin");
 	QString savedPluginPath = settings.value("filename","").toString();
 	settings.endGroup();
@@ -108,6 +164,7 @@ EMSCore::EMSCore(int argc, char *argv[]) : QApplication(argc,argv)
 		mainWindow->setPlugin(savedPluginPath);
 	}
 }
+
 void EMSCore::printHelp()
 {
 	qDebug() << "Help";
