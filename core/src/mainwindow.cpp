@@ -133,7 +133,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 	m_waitingForRamWriteConfirmation = false;
 	m_waitingForFlashWriteConfirmation = false;
 	ui.setupUi(this);
-    this->menuBar()->setNativeMenuBar(false);
+	this->menuBar()->setNativeMenuBar(false);
 	connect(ui.actionSave_Offline_Data,SIGNAL(triggered()),this,SLOT(menu_file_saveOfflineDataClicked()));
 	connect(ui.actionEMS_Status,SIGNAL(triggered()),this,SLOT(menu_windows_EmsStatusClicked()));
 	connect(ui.actionLoad_Offline_Data,SIGNAL(triggered()),this,SLOT(menu_file_loadOfflineDataClicked()));
@@ -523,115 +523,6 @@ void MainWindow::menu_file_loadOfflineDataClicked()
 		QJsonArray datalist = data["data"].toArray();
 		Table2DData *datar = m_emsCommsOffline->get2DTableData(locid);
 	}
-
-/*	QJson::Parser parser;
-	bool ok = false;
-	QVariant outputvar = parser.parse(out,&ok);
-	if (!ok)
-	{
-		QLOG_ERROR() << "Error parsing json:" << parser.errorString();
-		return;
-	}
-
-	QVariantMap top = outputvar.toMap();
-	QVariantMap datatable2d = top["2D"].toMap();
-	QVariantMap datatable3d = top["3D"].toMap();
-	QVariantMap dataraw = top["RAW"].toMap();
-
-	for(QVariantMap::const_iterator i=datatable2d.constBegin();i!=datatable2d.constEnd();i++)
-	{
-		bool ok = false;
-		unsigned short locid = i.key().toInt(&ok,16);
-		if (!ok)
-		{
-			QMessageBox::information(0,"Error","Error parsing json");
-			return;
-		}
-		QVariantMap tablemap = i.value().toMap();
-		QVariantList axislist = tablemap["axis"].toList();
-		QVariantList datalist = tablemap["data"].toList();
-		Table2DData *data = emsComms->get2DTableData(locid);
-		data->setWritesEnabled(false);
-		for (int j=0;j<axislist.size();j++)
-		{
-			data->setCell(0,j,axislist[j].toDouble());
-
-		}
-		for (int j=0;j<datalist.size();j++)
-		{
-			data->setCell(1,j,datalist[j].toDouble());
-		}
-		data->setWritesEnabled(true);
-		if (tablemap["ram"].toBool())
-		{
-			data->writeWholeLocation(true);
-		}
-		else
-		{
-			data->writeWholeLocation(false);
-		}
-	}
-	for (QVariantMap::const_iterator i=datatable3d.constBegin();i!=datatable3d.constEnd();i++)
-	{
-		bool ok = false;
-		unsigned short locid = i.key().toInt(&ok,16);
-		if (!ok)
-		{
-			QMessageBox::information(0,"Error","Error parsing json");
-			return;
-		}
-		QVariantMap current = i.value().toMap();
-		QVariantList xlist = current["x"].toList();
-		QVariantList ylist = current["y"].toList();
-		QVariantList zlist = current["z"].toList();
-		Table3DData *data = emsComms->get3DTableData(locid);
-		data->setWritesEnabled(false);
-		for (int j=0;j<xlist.size();j++)
-		{
-			data->setCell(ylist.size()-1,j,xlist[j].toDouble());
-		}
-		for (int j=0;j<ylist.size();j++)
-		{
-			data->setCell(j,0,ylist[j].toDouble());
-		}
-		for (int j=0;j<zlist.size();j++)
-		{
-			QVariantList z2list = zlist[j].toList();
-			for (int k=0;k<z2list.size();k++)
-			{
-				data->setCell(j,k,z2list[k].toDouble());
-			}
-
-		}
-		data->setWritesEnabled(true);
-		if (current["ram"].toBool())
-		{
-			data->writeWholeLocation(true);
-		}
-		else
-		{
-			data->writeWholeLocation(false);
-		}
-
-	}
-	for (QVariantMap::const_iterator i=dataraw.constBegin();i!=datatable3d.constEnd();i++)
-	{
-		bool ok = false;
-		unsigned short locid = i.key().toInt(&ok,16);
-		if (!ok)
-		{
-			QMessageBox::information(0,"Error","Error parsing json");
-			return;
-		}
-		QVariantList bytes = i.value().toList();
-		RawData *data = emsComms->getRawData(locid);
-		QByteArray bytearray;
-		for (int j=0;j<bytes.size();j++)
-		{
-			bytearray.append(bytes[j].toUInt());
-		}
-		data->setData(locid,true,bytearray);
-	}*/
 }
 void MainWindow::emsCommsSilence(qint64 lasttime)
 {
@@ -732,15 +623,12 @@ void MainWindow::setPlugin(QString plugin)
 	searchpaths.append("."); //Local
 	searchpaths.append("../../.."); //OSX local
 	m_memoryMetaData = emsComms->getMetaParser();
-	//m_memoryMetaData->loadMetaDataFromFile(searchpaths); //Changed to trigger a load from a file found internally.
-	//emsData->setMetaData(m_memoryMetaData);
 	parameterView->passConfigBlockList(m_memoryMetaData->configMetaData());
 	parameterView->passMenuList(m_memoryMetaData->menuMetaData());
 	QLOG_INFO() << m_memoryMetaData->errorMap().keys().size() << "Error Keys Loaded";
 	QLOG_INFO() << m_memoryMetaData->table3DMetaData().size() << "3D Tables Loaded";
 	QLOG_INFO() << m_memoryMetaData->table2DMetaData().size() << "2D Tables Loaded";
 	dataPacketDecoder = emsComms->getDecoder();
-	//connect(dataPacketDecoder,SIGNAL(payloadDecoded(QVariantMap)),this,SLOT(dataLogDecoded(QVariantMap)));
 	connect(emsComms,SIGNAL(dataLogPayloadDecoded(QVariantMap)),this,SLOT(dataLogDecoded(QVariantMap)));
 	dataTables->passDecoder(dataPacketDecoder);
 	m_logFileName = QDateTime::currentDateTime().toString("yyyy.MM.dd-hh.mm.ss");
@@ -783,7 +671,6 @@ void MainWindow::setPlugin(QString plugin)
 	emsComms->setLogsEnabled(m_saveLogs);
 	emsComms->setInterByteSendDelay(m_comInterByte);
 	emsComms->setlogsDebugEnabled(m_debugLogs);
-    //emsComms->start();
 }
 
 void MainWindow::locationIdList(QList<unsigned short> idlist)
@@ -843,8 +730,6 @@ void MainWindow::showTable(QString table)
 		TableView2D *view = new TableView2D();
 		connect(view,SIGNAL(destroyed(QObject*)),this,SLOT(rawDataViewDestroyed(QObject*)));
 		QString title;
-		//Table2DMetaData metadata = m_memoryMetaData->get2DMetaData(locid);
-		//view->setMetaData(metadata);
 		DataBlock *block = dynamic_cast<DataBlock*>(data2d);
 		if (!view->setData(table,block))
 		{
@@ -854,10 +739,8 @@ void MainWindow::showTable(QString table)
 		connect(view,SIGNAL(destroyed(QObject*)),this,SLOT(rawDataViewDestroyed(QObject*)));
 
 		QMdiSubWindow *win = ui.mdiArea->addSubWindow(view);
-		//win->setWindowTitle("Ram Location 0x" + QString::number(locid,16).toUpper() + " " + title);
 		win->setWindowTitle("Ram Location " + table);
 		win->setGeometry(0,0,((view->width() < this->width()-160) ? view->width() : this->width()-160),((view->height() < this->height()-100) ? view->height() : this->height()-100));
-		//m_rawDataView[locid] = view;
 		win->show();
 		QApplication::postEvent(win, new QEvent(QEvent::Show));
 		QApplication::postEvent(win, new QEvent(QEvent::WindowActivate));
@@ -867,21 +750,16 @@ void MainWindow::showTable(QString table)
 		TableView3D *view = new TableView3D();
 		connect(view,SIGNAL(destroyed(QObject*)),this,SLOT(rawDataViewDestroyed(QObject*)));
 		QString title;
-		//Table2DMetaData metadata = m_memoryMetaData->get2DMetaData(locid);
-		//view->setMetaData(metadata);
 		DataBlock *block = dynamic_cast<DataBlock*>(data3d);
 		if (!view->setData(table,block))
 		{
 			return;
 		}
-		//title = metadata.tableTitle;
 		connect(view,SIGNAL(destroyed(QObject*)),this,SLOT(rawDataViewDestroyed(QObject*)));
 
 		QMdiSubWindow *win = ui.mdiArea->addSubWindow(view);
-		//win->setWindowTitle("Ram Location 0x" + QString::number(locid,16).toUpper() + " " + title);
 		win->setWindowTitle("Ram Location " + table);
 		win->setGeometry(0,0,((view->width() < this->width()-160) ? view->width() : this->width()-160),((view->height() < this->height()-100) ? view->height() : this->height()-100));
-		//m_rawDataView[locid] = view;
 		win->show();
 		QApplication::postEvent(win, new QEvent(QEvent::Show));
 		QApplication::postEvent(win, new QEvent(QEvent::WindowActivate));
@@ -1163,36 +1041,7 @@ void MainWindow::locationIdInfo(unsigned short locationid,MemoryLocationInfo inf
 	{
 		title = "Unknown";
 	}
-	/*if (m_memoryMetaData->has2DMetaData(locationid))
-	{
-		//title = m_memoryMetaData->get2DMetaData(locationid).tableTitle;
-		if (m_memoryMetaData->get2DMetaData(locationid).size != info.size)
-		{
-			interrogateProgressViewCancelClicked();
-			QMessageBox::information(0,"Interrogate Error","Error: Meta data for table location 0x" + QString::number(locationid,16).toUpper() + " is not valid for actual table. Size: " + QString::number(info.size) + " expected: " + QString::number(m_memoryMetaData->get2DMetaData(locationid).size));
-		}
-	}
-	if (m_memoryMetaData->has3DMetaData(locationid))
-	{
-		//title = m_memoryMetaData->get3DMetaData(locationid).tableTitle;
-		if (m_memoryMetaData->get3DMetaData(locationid).size != info.size)
-		{
-			interrogateProgressViewCancelClicked();
-			QMessageBox::information(0,"Interrogate Error","Error: Meta data for table location 0x" + QString::number(locationid,16).toUpper() + " is not valid for actual table. Size: " + QString::number(info.size) + " expected: " + QString::number(m_memoryMetaData->get3DMetaData(locationid).size));
-		}
-	}
-	if (m_memoryMetaData->hasRORMetaData(locationid))
-	{
-		//title = m_memoryMetaData->getRORMetaData(locationid).dataTitle;
-		//m_readOnlyMetaDataMap[locationid]
-	}
-	if (m_memoryMetaData->hasLookupMetaData(locationid))
-	{
-		//title = m_memoryMetaData->getLookupMetaData(locationid).title;
-	}*/
-	//emsInfo->locationIdInfo(locationid,title,rawFlags,flags,parent,rampage,flashpage,ramaddress,flashaddress,size);
 	emsInfo->locationIdInfo(locationid,title,info);
-	//emsData->passLocationInfo(locationid,info);
 
 	//We don't care about ram only locations, since they're not available in offline mode anyway.
 	if (info.isFlash)
@@ -1440,41 +1289,7 @@ void MainWindow::emsCommsConnected()
 		delete m_wizardList[i];
 	}
 	m_wizardList.clear();
-	//m_defaultsDir
-	//QDir defaultsdir(m_defaultsDir);
 
-	//Load wizards from system, local, and home
-	//TODO: Delay loading these
-	//loadWizards(m_defaultsDir + "/wizards");
-	//loadWizards("wizards");
-	//loadWizards(m_localHomeDir + "/wizards");
-
-	//for (int i=0;i<emsComms->getConfigList().size();i++)
-	//{
-	//	parameterView->addConfig(emsComms->getConfigList()[i],emsComms->getConfigData(emsComms->getConfigList()[i]));
-		/*for (int j=0;j<m_wizardList.size();j++)
-		{
-			m_wizardList[j]->addConfig(emsComms->getConfigList()[i],emsComms->getConfigData(emsComms->getConfigList()[i]));
-		}*/
-	//}
-	/*if (m_gaugeActionMap.contains(emsComms->getPluginCompat()))
-	{
-		for (int i=0;i<ui.menuDashboards->actions().size();i++)
-		{
-			if (!m_gaugeActionMap[emsComms->getPluginCompat()].contains(ui.menuDashboards->actions()[i]))
-			{
-				ui.menuDashboards->actions()[i]->setVisible(false);
-
-			}
-		}
-	}
-	else if (emsComms->getPluginCompat() != "")
-	{
-		for (int i=0;i<ui.menuDashboards->actions().size();i++)
-		{
-			ui.menuDashboards->actions()[i]->setVisible(false);
-		}
-	}*/
 	//New log and settings file here.
 	if (m_memoryInfoMap.size() == 0)
 	{
@@ -1658,27 +1473,7 @@ void MainWindow::interrogationComplete()
 		//No windows are currently shown. Show the emsMdiWindow
 		emsMdiWindow->setHidden(false);
 	}
-	/*	QMdiSubWindow *tablesMdiWindow;
-	QMdiSubWindow *firmwareMetaMdiWindow;
-	QMdiSubWindow *interrogateProgressMdiWindow;
-	QMdiSubWindow *emsMdiWindow;
-	QMdiSubWindow *flagsMdiWindow;
-	QMdiSubWindow *gaugesMdiWindow;
-	QMdiSubWindow *packetStatusMdiWindow;
-	QMdiSubWindow *aboutMdiWindow;
-	QMdiSubWindow *emsStatusMdiWindow;*/
 
-	/*for (QMap<unsigned short,QWidget*>::const_iterator i=m_rawDataView.constBegin();i!=m_rawDataView.constEnd();i++)
-	{
-		windowsettings.setArrayIndex(val++);
-		windowsettings.value("window",i.key());
-		QMdiSubWindow *subwin = qobject_cast<QMdiSubWindow*>(i.value()->parent());
-		windowsettings.value("location",subwin->saveGeometry());
-		windowsettings.value("hidden",subwin->isHidden());
-		windowsettings.value("type",i.value()->metaObject()->className());
-
-	}
-	windowsettings.endArray();*/
 	parameterView->setActiveComms(emsComms);
 }
 void MainWindow::interrogateTaskStart(QString task, int sequence)
@@ -1836,26 +1631,7 @@ void MainWindow::checkMessageCounters(int sequencenumber)
 		if (m_locIdMsgList.size() == 0)
 		{
 			QLOG_INFO() << "All ID information recieved. Requesting Ram and Flash updates";
-			//populateParentLists();
-			/*TODO
-			 *QList<unsigned short>  memorylist = emsData->getTopLevelDeviceFlashLocations();
-			for (int i=0;i<memorylist.size();i++)
-			{
-				int seq = emsComms->retrieveBlockFromFlash(memorylist[i],0,0);
-				if (progressView) progressView->addTask("Getting Location ID 0x" + QString::number(memorylist[i],16).toUpper(),seq,2);
-				m_locIdInfoMsgList.append(seq);
-				if (progressView) progressView->setMaximum(progressView->maximum()+1);
-				interrogationSequenceList.append(seq);
-			}
-			memorylist = emsData->getTopLevelDeviceRamLocations();
-			for (int i=0;i<memorylist.size();i++)
-			{
-				int seq = emsComms->retrieveBlockFromRam(memorylist[i],0,0);
-				if (progressView) progressView->addTask("Getting Location ID 0x" + QString::number(memorylist[i],16).toUpper(),seq,2);
-				m_locIdInfoMsgList.append(seq);
-				if (progressView) progressView->setMaximum(progressView->maximum()+1);
-				interrogationSequenceList.append(seq);
-			}*/
+
 		}
 	}
 	else
@@ -1894,24 +1670,6 @@ void MainWindow::checkMessageCounters(int sequencenumber)
 			//Write everything to the settings.
 			QString json = "";
 			json += "{";
-/*			QJson::Serializer jsonSerializer;
-			QVariantMap top;
-			top["firmwareversion"] = emsinfo.firmwareVersion;
-			top["interfaceversion"] = emsinfo.interfaceVersion;
-			top["compilerversion"] = emsinfo.compilerVersion;
-			top["firmwarebuilddate"] = emsinfo.firmwareBuildDate;
-			top["decodername"] = emsinfo.decoderName;
-			top["operatingsystem"] = emsinfo.operatingSystem;
-			top["emstudiohash"] = emsinfo.emstudioHash;
-			top["emstudiocommit"] = emsinfo.emstudioCommit;
-
-			if (m_saveLogs)
-			{
-				QFile *settingsFile = new QFile(m_logDirectory + "/" + m_logFileName + ".meta.json");
-				settingsFile->open(QIODevice::ReadWrite);
-				settingsFile->write(jsonSerializer.serialize(top));
-				settingsFile->close();
-			}*/
 		}
 		else
 		{
@@ -2077,15 +1835,12 @@ void MainWindow::subMdiWindowActivated(QMdiSubWindow* window)
 	{
 		if (window->isVisible())
 		{
-		//connect(window,SIGNAL(windowStateChanged(Qt::WindowStates,Qt::WindowStates))
-		QAction *action = ui.menuOpen_Windows->addAction(window->windowTitle());
-		connect(action,SIGNAL(triggered()),this,SLOT(bringToFrontAndShow()));
-		connect(window->widget(),SIGNAL(windowHiding(QMdiSubWindow*)),this,SLOT(windowHidden(QMdiSubWindow*)));
-		connect(window,SIGNAL(destroyed(QObject*)),this,SLOT(windowDestroyed(QObject*)));
-		m_mdiSubWindowToActionMap[window] = action;
+			QAction *action = ui.menuOpen_Windows->addAction(window->windowTitle());
+			connect(action,SIGNAL(triggered()),this,SLOT(bringToFrontAndShow()));
+			connect(window->widget(),SIGNAL(windowHiding(QMdiSubWindow*)),this,SLOT(windowHidden(QMdiSubWindow*)));
+			connect(window,SIGNAL(destroyed(QObject*)),this,SLOT(windowDestroyed(QObject*)));
+			m_mdiSubWindowToActionMap[window] = action;
 		}
-		//connect(action,SIGNAL(triggered(bool)),window,SLOT(setVisible(bool)));
-		//connect(action,SIGNAL(triggered()),this,SLOT(bringToFrontAndShow()));
 		QLOG_DEBUG() << "Window Activated New:" << window->windowTitle();
 	}
 	else if (window)
@@ -2185,20 +1940,7 @@ void MainWindow::flashLocationDirty(unsigned short locationid)
 void MainWindow::closeEvent(QCloseEvent *evt)
 {
 	//Save the window state.
-	/*	QMap<unsigned short,QWidget*> m_rawDataView;
-	QMap<unsigned short,ConfigView*> m_configDataView;
-	QMdiSubWindow *tablesMdiWindow;
-	QMdiSubWindow *firmwareMetaMdiWindow;
-	QMdiSubWindow *interrogateProgressMdiWindow;
-	QMdiSubWindow *emsMdiWindow;
-	QMdiSubWindow *flagsMdiWindow;
-	QMdiSubWindow *gaugesMdiWindow;
-	QMdiSubWindow *packetStatusMdiWindow;
-	QMdiSubWindow *aboutMdiWindow;
-	QMdiSubWindow *emsStatusMdiWindow;
 
-	ParameterView *parameterView;
-	QMdiSubWindow *parameterMdiWindow;*/
 	QSettings windowsettings(EMSCore::instance().getSettingsFile(),QSettings::IniFormat);
 	windowsettings.beginWriteArray("rawwindows");
 	int val = 0;
@@ -2329,13 +2071,6 @@ void MainWindow::closeEvent(QCloseEvent *evt)
 	{
 		windowsettings.setValue("enabled",false);
 	}
-
-
-	//emsStatusMdiWindow
-	//windowsettings.setArrayIndex(val++);
-	//windowsettings.setValue("location",emsStatusMdiWindow->saveGeometry());
-	////windowsettings.setValue("hidden",emsStatusMdiWindow->isHidden());
-	//windowsettings.setValue("type","emsStatusMdiWindow");
 
 
 	windowsettings.endArray();
