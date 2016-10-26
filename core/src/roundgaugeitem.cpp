@@ -26,10 +26,9 @@
 
 #include "roundgaugeitem.h"
 
-RoundGaugeItem::RoundGaugeItem(QWidget *parent)
+RoundGaugeItem::RoundGaugeItem(QQuickPaintedItem *parent)
 {
     Q_UNUSED(parent);
-    setFlag(QGraphicsItem::ItemHasNoContents, false);
     m_redrawBackground = true;
 }
 
@@ -136,10 +135,9 @@ void RoundGaugeItem::drawBackground() {
     painter.end();
 }
 
-void RoundGaugeItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *style , QWidget *w)
+void RoundGaugeItem::paint(QPainter *painter)
 {
-    Q_UNUSED(style);
-    Q_UNUSED(w);
+
 
     if (m_redrawBackground) {
         m_redrawBackground = false;

@@ -25,7 +25,9 @@
 GaugeView::GaugeView(QWidget *parent) : QWidget(parent)
 {
 	ui.setupUi(this);
-	widget = new GaugeWidget(this);
+	//widget = new GaugeWidget(this);
+	m_gaugeWidget = new GaugeWidget();
+	widget = QWidget::createWindowContainer(m_gaugeWidget,this);
 	widget->setGeometry(0,0,1200,700);
 	widget->show();
 
@@ -49,8 +51,8 @@ void GaugeView::passData(QVariantMap data)
 }
 QString GaugeView::setFile(QString file)
 {
-	QString result = widget->setFile(file);
-	propertiesInUse = widget->getPropertiesInUse();
+	QString result = m_gaugeWidget->setFile(file);
+	propertiesInUse = m_gaugeWidget->getPropertiesInUse();
 	return result;
 }
 
@@ -67,7 +69,7 @@ void GaugeView::guiUpdateTimerTick()
 	{
 		if (propertiesInUse.contains(i.key()))
 		{
-			widget->propertyMap.setProperty(i.key().toLatin1(),i.value());
+			m_gaugeWidget->propertyMap.setProperty(i.key().toLatin1(),i.value());
 		}
 		//ui.tableWidget->item(m_nameToIndexMap[i.key()],1)->setText(QString::number(i.value()));
 		i++;

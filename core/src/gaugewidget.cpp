@@ -24,10 +24,10 @@
 #include "bargaugeitem.h"
 #include "QsLog.h"
 #include <QMetaType>
-#include <QDeclarativeContext>
 #include <QFile>
 #include <QDir>
-GaugeWidget::GaugeWidget(QWidget *parent) : QDeclarativeView(parent)
+#include <QtQml/QQmlContext>
+GaugeWidget::GaugeWidget(QQuickView *parent) : QQuickView(parent)
 {
 	qmlRegisterType<GaugeItem>("GaugeImage",0,1,"GaugeImage");
 	qmlRegisterType<RoundGaugeItem>("AviatorGauges", 0, 1, "RoundGauge");
@@ -58,7 +58,7 @@ QString GaugeWidget::setFile(QString file)
 	{
 		for (int i=0;i<rootObject()->childItems().size();i++)
 		{
-			QGraphicsObject *obj = qobject_cast<QGraphicsObject*>(rootObject()->childItems()[i]);
+			QQuickItem *obj = qobject_cast<QQuickItem*>(rootObject()->childItems()[i]);
 			if (obj)
 			{
 				propertylist.append(obj->property("propertyMapProperty").toString());

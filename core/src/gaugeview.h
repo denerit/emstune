@@ -45,7 +45,8 @@ private:
 	DataPacketDecoder *dataPacketDecoder;
 	QVariantMap m_valueMap;
 	Ui::DataGauges ui;
-	GaugeWidget *widget;
+	QWidget *widget;
+	GaugeWidget *m_gaugeWidget;
 protected:
 	void closeEvent(QCloseEvent *event);
 private slots:

@@ -1,25 +1,23 @@
 #ifndef WIZARDVIEW_H
 #define WIZARDVIEW_H
 
-#include <QDeclarativeView>
-#include <QDeclarativeContext>
-#include <QDeclarativeEngine>
-#include <QDeclarativePropertyMap>
+#include <QtQuick/QQuickView>
+#include <QtQml/QQmlPropertyMap>
 #include <QTimer>
 #include <emscomms.h>
-class WizardView : public QDeclarativeView
+class WizardView : public QQuickView
 {
 	Q_OBJECT
 
 public:
     Q_INVOKABLE void addConfigRequest(QString name);
-	explicit WizardView(QWidget *parent = 0);
+	explicit WizardView(QQuickView *parent = 0);
 	Q_INVOKABLE void setMemory(unsigned short locationid,unsigned short offset,unsigned short length,QVariantList array);
 	void setFile(EmsComms *comms,QString filename);
 	void passConfig(QMap<QString,QList<ConfigBlock> > config);
     void addConfig(QString name,ConfigData *config);
 private:
-	QDeclarativePropertyMap m_configPropertyMap;
+	QQmlPropertyMap m_configPropertyMap;
 	QMap<QString,QList<ConfigBlock> > m_configBlock;
 	QTimer *updateTimer;
 	QVariantMap m_savedPayload;

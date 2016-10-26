@@ -24,7 +24,7 @@
 #define ABSTRACTGAUGEITEM_H
 
 #include <QPen>
-#include <QDeclarativeItem>
+#include <QtQuick/QQuickPaintedItem>
 #include <QPainter>
 #include <QTimer>
 
@@ -34,11 +34,11 @@ enum GaugeStatus {
     STATUS_DANGER = 3
 };
 
-class AbstractGaugeItem : public QDeclarativeItem
+class AbstractGaugeItem : public QQuickPaintedItem
 {
     Q_OBJECT
 public:
-    explicit AbstractGaugeItem(QDeclarativeItem *parent = 0);
+    explicit AbstractGaugeItem(QQuickPaintedItem *parent = 0);
     Q_PROPERTY(QString title READ getTitle WRITE setTitle)
     Q_PROPERTY(QString unit READ getUnit WRITE setUnit)
     Q_PROPERTY(double low READ getLow WRITE setLow)

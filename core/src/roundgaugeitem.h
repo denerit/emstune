@@ -34,12 +34,12 @@ class RoundGaugeItem : public AbstractGaugeItem
 {
 
 public:
-    explicit RoundGaugeItem(QWidget *parent = 0);
+    explicit RoundGaugeItem(QQuickPaintedItem *parent = 0);
 
 private:
     void init();
     void drawBackground();
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *style , QWidget *w);
+    void paint(QPainter *painter);
 
     static const int arcSize = 3600; //225 * 16;
     static const int arcStart = 2160; //135 * 16;

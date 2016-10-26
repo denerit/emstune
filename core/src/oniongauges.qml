@@ -4,7 +4,7 @@
  * Author: Ari "MrOnion" Karhu (ari@baboonplanet.com)
  */
 
-import Qt 4.7
+import QtQuick 2.7
 import AviatorGauges 0.1
 
 Rectangle {

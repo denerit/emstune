@@ -23,10 +23,10 @@
 #define M_PI 3.1415926535897932384626433832795
 #include <math.h>
 #include <QString>
+
 #include <QDebug>
-GaugeItem::GaugeItem() : QDeclarativeItem()
+GaugeItem::GaugeItem() : QQuickPaintedItem()
 {
-	setFlag(QGraphicsItem::ItemHasNoContents, false);
 	m_fake = false;
 	m_style = 3;
 	m_fadeEnabled = false;
@@ -673,11 +673,9 @@ void GaugeItem::drawBackground(QPainter *painter)
 
 	}
 }
-void GaugeItem::paint(QPainter *tmpPainter, const QStyleOptionGraphicsItem *style , QWidget * w)
+void GaugeItem::paint(QPainter *tmpPainter)
 //void GaugeItem::paintEvent(QPaintEvent *evt)
 {
-	Q_UNUSED(style);
-	Q_UNUSED(w);
 	tmpPainter->setRenderHint(QPainter::Antialiasing);
 	if (m_redrawBackground)
 	{

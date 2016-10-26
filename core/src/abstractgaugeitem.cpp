@@ -27,8 +27,8 @@ const QColor AbstractGaugeItem::colorWarning = QColor::fromRgb(240, 215, 50);
 const QColor AbstractGaugeItem::colorDanger = QColor::fromRgb(220, 40, 40);
 const QColor AbstractGaugeItem::colorValue = QColor::fromRgb(50, 100, 50);
 
-AbstractGaugeItem::AbstractGaugeItem(QDeclarativeItem *parent) :
-    QDeclarativeItem(parent)
+AbstractGaugeItem::AbstractGaugeItem(QQuickPaintedItem *parent) :
+    QQuickPaintedItem(parent)
 {
     m_title = "---";
     m_unit = "";
@@ -39,6 +39,7 @@ AbstractGaugeItem::AbstractGaugeItem(QDeclarativeItem *parent) :
     m_lowWarningSet = false;
     m_highDangerSet = false;
     m_highWarningSet = false;
+    m_background = 0;
 }
 
 double AbstractGaugeItem::getLow() {
@@ -185,8 +186,11 @@ QColor AbstractGaugeItem::getStatusColor() {
 void AbstractGaugeItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
     Q_UNUSED(oldGeometry);
-    delete m_background;
-    m_background = new QImage(newGeometry.width(),newGeometry.height(),QImage::Format_ARGB32);
-    this->init();
-    m_redrawBackground = true;
+	if (m_background)
+	{
+		delete m_background;
+	}
+	m_background = new QImage(newGeometry.width(),newGeometry.height(),QImage::Format_ARGB32);
+	this->init();
+	m_redrawBackground = true;
 }

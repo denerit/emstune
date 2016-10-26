@@ -38,7 +38,7 @@ public:
 private:
     void init();
     void drawBackground();
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *style , QWidget *w);
+    void paint(QPainter *painter);
 
     int m_size;
     int m_barSize;

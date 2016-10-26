@@ -29,7 +29,6 @@
 BarGaugeItem::BarGaugeItem(QWidget *parent)
 {
     Q_UNUSED(parent);
-    setFlag(QGraphicsItem::ItemHasNoContents, false);
     m_redrawBackground = true;
 }
 
@@ -124,10 +123,8 @@ void BarGaugeItem::drawBackground() {
     painter.end();
 }
 
-void BarGaugeItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *style , QWidget *w)
+void BarGaugeItem::paint(QPainter *painter)
 {
-    Q_UNUSED(style);
-    Q_UNUSED(w);
 
     if (m_redrawBackground) {
         m_redrawBackground = false;

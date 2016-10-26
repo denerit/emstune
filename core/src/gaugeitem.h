@@ -22,12 +22,13 @@
 #ifndef GAUGEITEM_H
 #define GAUGEITEM_H
 #include <QPen>
-#include <QDeclarativeItem>
+#include <QtQuick/QQuickItem>
 //#include <QPaintEvent>
 #include <QPainter>
 //#include <QImage>
 #include <QTimer>
-class GaugeItem : public QDeclarativeItem
+#include <QtQuick/QQuickPaintedItem>
+class GaugeItem : public QQuickPaintedItem
 {
 	Q_OBJECT
 public:
@@ -83,7 +84,7 @@ private:
 	int fadeAmount;
 	//void paintEvent(QPaintEvent *evt);
 	//void resizeEvent (QResizeEvent *evt);
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *style , QWidget * w);
+	void paint(QPainter *painter);
 	bool resizeDraw;
 	void drawBackground(QPainter *tmpPainter);
 	QImage *_bgImage;

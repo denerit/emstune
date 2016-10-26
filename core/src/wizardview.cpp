@@ -1,6 +1,7 @@
 #include "wizardview.h"
 #include <QDebug>
-WizardView::WizardView(QWidget *parent) : QDeclarativeView(parent)
+#include <QtQml/QQmlContext>
+WizardView::WizardView(QQuickView *parent) : QQuickView(parent)
 {
 
 }
