@@ -606,6 +606,8 @@ void MainWindow::setPlugin(QString plugin)
 	{
 
 		QLOG_ERROR() << "Unable to load plugin. error:" << pluginLoader->errorString();
+		QMessageBox::information(this,"Error","Unable to load plugin " + m_pluginFileName + "\nError as follows:\n" + pluginLoader->errorString() +  \
+		   "\nPlease ensure the plugin file exists. If the problem persists, remove your *.ini settings file and try again");
 		exit(-1);
 	}
 	emsComms = qobject_cast<EmsComms*>(pluginLoader->instance());
@@ -613,6 +615,8 @@ void MainWindow::setPlugin(QString plugin)
 	{
 		QLOG_ERROR() << "Unable to load plugin!!!";
 		QLOG_ERROR() << pluginLoader->errorString();
+		QMessageBox::information(this,"Error","Unable to load plugin " + m_pluginFileName + "\nError as follows:\n" + pluginLoader->errorString() +  \
+		   "\nPlease ensure the plugin file exists. If the problem persists, remove your *.ini settings file and try again");
 		exit(-1);
 	}
 	emsComms->passLogger(&QsLogging::Logger::instance());
