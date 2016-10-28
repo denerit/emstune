@@ -20,6 +20,7 @@ PluginManager::PluginManager(QWidget *parent) : QWidget(parent)
 	QLOG_INFO() << "Attempting to load plugin:" << m_pluginFileName;
 */
 	QStringList dirlist;
+	dirlist.append(QApplication::applicationDirPath() + "/plugins"); //Installed folder
 	dirlist.append("plugins"); //Default local
 	dirlist.append(QString(define2string(INSTALL_PREFIX)) + "/share/emstudio/plugins"); //make installed on linux
 	foreach (QString dirstr,dirlist)

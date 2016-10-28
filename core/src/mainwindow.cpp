@@ -1867,9 +1867,12 @@ MainWindow::~MainWindow()
 	}
 	m_wizardList.clear();
 
-	emsComms->stop();
-	//emsComms->wait(1000);
-	delete emsComms;
+	if (emsComms)
+	{
+		emsComms->stop();
+		//emsComms->wait(1000);
+		delete emsComms;
+	}
 }
 void MainWindow::emsMemoryDirty()
 {
