@@ -19,7 +19,6 @@ public:
 	QString &getDefaultsDirectory() { return m_defaultsDir; }
 	QString &getHomeDirectory() { return m_localHomeDir; }
 	QString &getSettingsFile() { return m_settingsFile; }
-	QSettings &getSettings() { return QSettings(getSettingsFile(),QSettings::IniFormat); }
 private:
 	QList<QPair<QString,QString> > getArgs(int argc, char **argv);
 	void printHelp();
