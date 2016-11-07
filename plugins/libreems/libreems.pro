@@ -20,12 +20,13 @@ DEPENDPATH += $$PWD/../../lib/core
 
 include (../../core/QsLog/QsLog.pri)
 include (serial/serial.pri)
+include (../../lib/core/core.pri)
 win32 { #Windows based mingw build
 	TARGET = ../../../core/plugins/libreemsplugin
 	win32:QMAKE_LFLAGS += -shared
 	message("Building for win32")
-	DEFINES += GIT_COMMIT=$$system(\"c:/program files (x86)/git/bin/git.exe\" describe --dirty=-DEV --always)
-	DEFINES += GIT_HASH=$$system(\"c:/program files (x86)/git/bin/git.exe\" log -n 1 --pretty=format:%H)
+	DEFINES += GIT_COMMIT=$$system(\"c:/program files/git/bin/git.exe\" describe --dirty=-DEV --always)
+	DEFINES += GIT_HASH=$$system(\"c:/program files/git/bin/git.exe\" log -n 1 --pretty=format:%H)
 } else:mac {
 	TARGET = ../../core/plugins/libreemsplugin
 	INCLUDEPATH += /opt/local/include
@@ -54,12 +55,12 @@ win32 { #Windows based mingw build
 HEADERS += datapacketdecoder.h \
 	table2ddata.h \
 	table3ddata.h \
-	../../lib/core/configdata.h \
-	../../lib/core/datapacketdecoder.h \
-	../../lib/core/table2ddata.h \
-	../../lib/core/table3ddata.h \
-	../../lib/core/emscomms.h \
-	../../lib/core/rawdata.h \
+	#../../lib/core/configdata.h \
+	#../../lib/core/datapacketdecoder.h \
+	#../../lib/core/table2ddata.h \
+	#../../lib/core/table3ddata.h \
+	#../../lib/core/emscomms.h \
+	#../../lib/core/rawdata.h \
 	tabledata.h \
 	emscomms.h \
 	memorymetadata.h \

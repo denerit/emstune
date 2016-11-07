@@ -18,6 +18,7 @@ INCLUDEPATH += $$PWD/../lib/core
 DEPENDPATH += $$PWD/../lib/core
 
 include(QsLog/QsLog.pri)
+include (../lib/core/core.pri)
 
 win32 {
 	message("Building for win32")
@@ -126,7 +127,6 @@ HEADERS  += src/mainwindow.h \
 	src/aboutview.h \
 	src/tableview3d.h \
 	src/interrogateprogressview.h \
-	../lib/core/tabledata.h \
 	src/readonlyramview.h \
 	src/overviewprogressitemdelegate.h \
 	src/dataview.h \
@@ -134,12 +134,7 @@ HEADERS  += src/mainwindow.h \
 	src/tablemap3d.h \
 	src/tablewidget.h \
 	src/configview.h \
-	../lib/core/table2ddata.h \
-	../lib/core/table3ddata.h \
-	../lib/core/memorymetadata.h \
 	src/tablewidgetdelegate.h \
-	../lib/core/emscomms.h \
-	../lib/core/datapacketdecoder.h \
 	src/parameterview.h \
 	src/parameterwidget.h \
 	src/wizardview.h \
@@ -182,7 +177,7 @@ FORMS    += src/mainwindow.ui \
 	src/parameterwidget.ui \
 	src/ramdiffwindow.ui \
 	src/pluginmanager.ui \
-    src/firmwaredebugview.ui
+	src/firmwaredebugview.ui
 SUBDIRS += plugins
 OTHER_FILES += \
 	README.md \
