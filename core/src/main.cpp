@@ -29,7 +29,7 @@
 
 
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
 	EMSCore::instance(argc,argv);
 	EMSCore::instance().run();

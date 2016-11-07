@@ -5,15 +5,24 @@
 #include <QSettings>
 #include "mainwindow.h"
 #include "pluginmanager.h"
+
 class EMSCore : public QApplication
 {
 public:
-	EMSCore(int argc = 1, char *argv[] = 0);
-	static EMSCore& instance(int argc = 1, char *argv[] = 0)  // return a reference
+    EMSCore(int &argc, char **argv);
+	static EMSCore& instance(int &argc, char **argv)  // return a reference
 	{
-		static EMSCore instance(argc, argv);
-		return instance;
+		if (instancevar == 0)
+		{
+			instancevar = new EMSCore(argc,argv);
+		}
+		return *instancevar;
 	}
+	static EMSCore& instance() //Default return an instance
+	{
+		return *instancevar;
+	}
+	static EMSCore *instancevar;
 	void run();
 	QString &getSettingsDirectory() { return m_settingsDir; }
 	QString &getDefaultsDirectory() { return m_defaultsDir; }

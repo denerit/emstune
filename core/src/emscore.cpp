@@ -1,7 +1,12 @@
 #include "emscore.h"
 #include "QsLog.h"
 #include <QDir>
-EMSCore::EMSCore(int argc, char *argv[]) : QApplication(argc,argv)
+#include <QString>
+#define define2string_p(x) #x
+#define define2string(x) define2string_p(x)
+EMSCore *EMSCore::instancevar = 0;
+
+EMSCore::EMSCore(int &argc, char *argv[]) : QApplication(argc,argv)
 {
 	//Init the logger
 	QsLogging::Logger& logger = QsLogging::Logger::instance();
