@@ -40,7 +40,6 @@ PluginManager::PluginManager(QWidget *parent) : QWidget(parent)
 				layout->insertWidget(1,button);
 				m_buttonToFilenameMap.insert(button,absolutepath);
 			}
-
 		}
 	}
 	connect(ui.savePushButton,SIGNAL(clicked()),this,SLOT(selectClicked()));
