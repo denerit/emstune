@@ -334,7 +334,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
 	emsSilenceTimer = new QTimer(this);
 	connect(emsSilenceTimer,SIGNAL(timeout()),this,SLOT(emsCommsSilenceTimerTick()));
-	emsSilenceTimer->start();
+	emsSilenceTimer->start(1000);
 
 
 }
