@@ -3,6 +3,7 @@
 #include <QFile>
 #include <QPluginLoader>
 #include <QRadioButton>
+#include <QDebug>
 #include "paths.h"
 
 PluginManager::PluginManager(QWidget *parent) : QWidget(parent)
@@ -19,10 +20,12 @@ PluginManager::PluginManager(QWidget *parent) : QWidget(parent)
 
 	QLOG_INFO() << "Attempting to load plugin:" << m_pluginFileName;
 */
+	m_currentFilename = "";
 	QStringList dirlist;
 	dirlist.append(QApplication::applicationDirPath() + "/plugins"); //Installed folder
 	dirlist.append("plugins"); //Default local
 	dirlist.append(QString(define2string(INSTALL_PREFIX)) + "/share/emstudio/plugins"); //make installed on linux
+	dirlist.append("C:\\Program Files (x86)\\EMStudio\\plugins"); //Default on Windows
 	foreach (QString dirstr,dirlist)
 	{
 		QDir dir(dirstr);
@@ -31,11 +34,16 @@ PluginManager::PluginManager(QWidget *parent) : QWidget(parent)
 			QString absolutepath = dir.absoluteFilePath(file);
 			QPluginLoader loader(absolutepath);
 			QJsonObject meta = loader.metaData();
-			if (meta.contains("IID"))
+			qDebug() << meta;
+			if (meta.contains("MetaData"))
 			{
+				QJsonObject metaDataObject = meta.value("MetaData").toObject();
+				QString name = metaDataObject.value("Name").toString();
+				QString version = metaDataObject.value("Version").toString();
+				QString desc = metaDataObject.value("Description").toString();
 				QRadioButton *button = new QRadioButton(this);
 				connect(button,SIGNAL(clicked()),this,SLOT(radioButtonClicked()));
-				button->setText(meta.value("IID").toString());
+				button->setText("Name: " + name + "\nVersion: " + version + "\nDescription: " + desc + "\nMetaID: " + meta.value("IID").toString()+ "\nFile Path: " + absolutepath);
 				QVBoxLayout *layout = qobject_cast<QVBoxLayout*>(ui.groupBox->layout());
 				layout->insertWidget(1,button);
 				m_buttonToFilenameMap.insert(button,absolutepath);
@@ -44,6 +52,8 @@ PluginManager::PluginManager(QWidget *parent) : QWidget(parent)
 	}
 	connect(ui.savePushButton,SIGNAL(clicked()),this,SLOT(selectClicked()));
 	connect(ui.cancelPushButton,SIGNAL(clicked()),this,SLOT(cancelClicked()));
+
+	ui.savePushButton->setEnabled(false);
 }
 
 PluginManager::~PluginManager()
@@ -55,6 +65,7 @@ void PluginManager::radioButtonClicked()
 	if (m_buttonToFilenameMap.contains(send))
 	{
 		m_currentFilename = m_buttonToFilenameMap.value(send);
+		ui.savePushButton->setEnabled(true);
 	}
 }
 void PluginManager::selectClicked()

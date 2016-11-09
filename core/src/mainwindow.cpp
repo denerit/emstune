@@ -585,10 +585,8 @@ void MainWindow::setPlugin(QString plugin)
 	settings.sync();
 	if (emsComms)
 	{
-	emsComms->stop();
-	//emsComms->terminate();
-	//emsComms->wait(250); //Join it, fixes a race condition where the thread deletes before it's finished.
-	emsComms->deleteLater();
+		emsComms->stop();
+		emsComms->deleteLater();
 	}
 	pluginLoader->unload();
 	pluginLoader->deleteLater();
@@ -614,9 +612,9 @@ void MainWindow::setPlugin(QString plugin)
 	emsComms = qobject_cast<EmsComms*>(pluginLoader->instance());
 	if (!emsComms)
 	{
-		QLOG_ERROR() << "Unable to load plugin!!!";
+		QLOG_ERROR() << "Unable to instance plugin!!!";
 		QLOG_ERROR() << pluginLoader->errorString();
-		QMessageBox::information(this,"Error","Unable to load plugin " + m_pluginFileName + "\nError as follows:\n" + pluginLoader->errorString() +  \
+		QMessageBox::information(this,"Error","Unable to instance plugin " + m_pluginFileName + "\nError as follows:\n" + pluginLoader->errorString() +  \
 		   "\nPlease ensure the plugin file exists. If the problem persists, remove your *.ini settings file and try again");
 		menu_editPluginManager();
 		return;
@@ -978,6 +976,8 @@ void MainWindow::menu_connectClicked()
 	if (!emsComms)
 	{
 		QLOG_ERROR() << "No EMSCOMMS!!!";
+		menu_editPluginManager();
+		return;
 	}
 	QLOG_INFO() << "Starting emsComms:" << emsComms;
 	//emsComms->start();

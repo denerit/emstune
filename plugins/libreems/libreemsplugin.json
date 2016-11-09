@@ -1,0 +1,5 @@
+{ 
+	"Name":"LibreEmsPlugin",
+	"Version":"V0.0.1",
+	"Description":"Plugin for communicating with LibreEMS Firmware S19x based ECUs"
+}

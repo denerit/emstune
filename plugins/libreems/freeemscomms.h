@@ -46,7 +46,7 @@ class FreeEmsComms : public EmsComms
 {
 	Q_OBJECT
 	Q_INTERFACES(EmsComms)
-	Q_PLUGIN_METADATA(IID "EmsComms/1.0")
+	Q_PLUGIN_METADATA(IID "EmsComms/1.0" FILE "libreemsplugin.json")
 public:
 	QMutex m_serialPortMutex;
 	FreeEmsComms(QObject *parent = 0);
