@@ -195,418 +195,440 @@ void PacketDecoder::parsePacket(Packet parsedPacket)
 	if (parsedPacket.isValid)
 	{
 		//QMutexLocker locker(&m_waitingInfoMutex);
-		unsigned short payloadid = parsedPacket.payloadid;
+		unsigned short payloadid = parsedPacket.payloadid-1;
 
 		//if (m_isSilent)
 		//{
 		//	emit emsSilenceBroken();
 		//	m_isSilent = false;
 		//}
-		if (payloadid == 0x0191)
-		{	//Datalog packet
-
-			if (parsedPacket.isNAK)
-			{
-				//NAK
-			}
-			else
-			{
-				emit dataLogPayloadReceived(parsedPacket.header,parsedPacket.payload);
-			}
-		}
-		else if (payloadid == 0xEEEF)
+		switch (payloadid)
 		{
-			//Decoder
-			if (!(parsedPacket.isNAK))
+			case DATALOG_PACKET:
 			{
-				emit decoderName(QString(parsedPacket.payload));
-			}
-		}
-		else if (payloadid == 0xEEF1)
-		{
-			//Firmware build date
-			if (!(parsedPacket.isNAK))
-			{
-				emit firmwareBuild(QString(parsedPacket.payload));
-			}
-		}
-		else if (payloadid == 0xEEF3)
-		{
-			//Compiler Version
-			if (!(parsedPacket.isNAK))
-			{
-				emit compilerVersion(QString(parsedPacket.payload));
-			}
-		}
-		else if (payloadid == 0xEEF5)
-		{
-			//Operating System
-			if (!(parsedPacket.isNAK))
-			{
-				emit operatingSystem(QString(parsedPacket.payload));
-			}
-		}
-		else if (payloadid == 0xEEF7)
-		{
-			//Built By Name
-			if (!(parsedPacket.isNAK))
-			{
-				emit builtByName(QString(parsedPacket.payload));
-			}
-		}
-		else if (payloadid == 0xEEF9)
-		{
-			//Support Email
-			if (!(parsedPacket.isNAK))
-			{
-				emit supportEmail(QString(parsedPacket.payload));
-			}
-		}
-		else if (payloadid == 0xDA5F)
-		{
-			//Location ID List
-			if (parsedPacket.isNAK)
-			{
-			}
-			else
-			{
-				//TODO double check to make sure that there aren't an odd number of items here...
-				QLOG_DEBUG() << "Location ID List";
-				QString details = "Details: {";
-				for (int j=0;j<parsedPacket.payload.size();j++)
+				if (parsedPacket.isNAK)
 				{
-					details += "0x";
-					details += (((unsigned char)parsedPacket.payload[j] < 0xF) ? "0" : "");
-					details += QString::number(parsedPacket.payload[j],16);
-					details += ",";
+					//NAK
 				}
-				details += "}";
-				QList<unsigned short> locationidlist;
-				for (int j=0;j<parsedPacket.payload.size();j+=2)
+				else
 				{
-					unsigned short tmp = 0;
-					tmp += parsedPacket.payload[j] << 8;
-					tmp += parsedPacket.payload[j+1];
-					locationidlist.append(tmp);
+					emit dataLogPayloadReceived(parsedPacket.header,parsedPacket.payload);
 				}
-				emit locationIdList(locationidlist);
+				break;
 			}
-		}
-		else if (payloadid == 0xF8E1) //Location ID Info
-		{
-			if (parsedPacket.isNAK)
+			case GET_DECODER_NAME:
 			{
-			}
-			else
-			{
-				QString details = "Details: {";
-				for (int j=0;j<parsedPacket.payload.size();j++)
+				//Decoder
+				if (!(parsedPacket.isNAK))
 				{
-					details += "0x";
-					details += (((unsigned char)parsedPacket.payload[j] < 0xF) ? "0" : "");
-					details += QString::number(parsedPacket.payload[j],16);
-					details += ",";
+					emit decoderName(QString(parsedPacket.payload));
 				}
-				details += "}";
-
-
-				//unsigned short locationid = m_currentWaitingRequest.args[0].toInt();
-				//TODO double check to make sure that there aren't an odd number of items here...
-				QList<LocationIdFlags> flaglist;
-				if (parsedPacket.payload.size() >= 2)
+				break;
+			}
+			case GET_FIRMWARE_BUILD_DATE:
+			{
+				//Firmware build date
+				if (!(parsedPacket.isNAK))
 				{
-					MemoryLocationInfo info;
-					unsigned short test = parsedPacket.payload[0] << 8;
-					unsigned short parent;
-					unsigned char rampage;
-					unsigned char flashpage;
-					unsigned short ramaddress;
-					unsigned short flashaddress;
-					unsigned short size;
-					unsigned short descid;
-					test += parsedPacket.payload[1];
-
-
-					for (int j=0;j<m_blockFlagList.size();j++)
+					emit firmwareBuild(QString(parsedPacket.payload));
+				}
+				break;
+			}
+			case GET_COMPILER_VERSION:
+			{
+				//Compiler Version
+				if (!(parsedPacket.isNAK))
+				{
+					emit compilerVersion(QString(parsedPacket.payload));
+				}
+				break;
+			}
+			case GET_OPERATING_SYSTEM:
+			{
+				//Operating System
+				if (!(parsedPacket.isNAK))
+				{
+					emit operatingSystem(QString(parsedPacket.payload));
+				}
+				break;
+			}
+			case GET_BUILT_BY_NAME:
+			{
+				//Built By Name
+				if (!(parsedPacket.isNAK))
+				{
+					emit builtByName(QString(parsedPacket.payload));
+				}
+				break;
+			}
+			case GET_SUPPORT_EMAIL:
+			{
+				//Support Email
+				if (!(parsedPacket.isNAK))
+				{
+					emit supportEmail(QString(parsedPacket.payload));
+				}
+				break;
+			}
+			case GET_LOCATION_ID_LIST:
+			{
+				//Location ID List
+				if (parsedPacket.isNAK)
+				{
+				}
+				else
+				{
+					//TODO double check to make sure that there aren't an odd number of items here...
+					QLOG_DEBUG() << "Location ID List";
+					QString details = "Details: {";
+					for (int j=0;j<parsedPacket.payload.size();j++)
 					{
-						if (test & m_blockFlagList[j])
+						details += "0x";
+						details += (((unsigned char)parsedPacket.payload[j] < 0xF) ? "0" : "");
+						details += QString::number(parsedPacket.payload[j],16);
+						details += ",";
+					}
+					details += "}";
+					QList<unsigned short> locationidlist;
+					for (int j=0;j<parsedPacket.payload.size();j+=2)
+					{
+						unsigned short tmp = 0;
+						tmp += parsedPacket.payload[j] << 8;
+						tmp += parsedPacket.payload[j+1];
+						locationidlist.append(tmp);
+					}
+					emit locationIdList(locationidlist);
+				}
+				break;
+			}
+			case GET_LOCATION_ID_INFO: //Location ID Info
+			{
+				if (parsedPacket.isNAK)
+				{
+				}
+				else
+				{
+					QString details = "Details: {";
+					for (int j=0;j<parsedPacket.payload.size();j++)
+					{
+						details += "0x";
+						details += (((unsigned char)parsedPacket.payload[j] < 0xF) ? "0" : "");
+						details += QString::number(parsedPacket.payload[j],16);
+						details += ",";
+					}
+					details += "}";
+
+
+					//unsigned short locationid = m_currentWaitingRequest.args[0].toInt();
+					//TODO double check to make sure that there aren't an odd number of items here...
+					QList<LocationIdFlags> flaglist;
+					if (parsedPacket.payload.size() >= 2)
+					{
+						MemoryLocationInfo info;
+						unsigned short test = parsedPacket.payload[0] << 8;
+						unsigned short parent;
+						unsigned char rampage;
+						unsigned char flashpage;
+						unsigned short ramaddress;
+						unsigned short flashaddress;
+						unsigned short size;
+						unsigned short descid;
+						test += parsedPacket.payload[1];
+
+
+						for (int j=0;j<m_blockFlagList.size();j++)
 						{
-							flaglist.append(m_blockFlagList[j]);
-							if (m_blockFlagToNameMap.contains(m_blockFlagList[j]))
+							if (test & m_blockFlagList[j])
 							{
-								info.propertymap.append(QPair<QString,QString>(m_blockFlagToNameMap[m_blockFlagList[j]],"true"));
+								flaglist.append(m_blockFlagList[j]);
+								if (m_blockFlagToNameMap.contains(m_blockFlagList[j]))
+								{
+									info.propertymap.append(QPair<QString,QString>(m_blockFlagToNameMap[m_blockFlagList[j]],"true"));
+								}
 							}
+							else
+							{
+								if (m_blockFlagToNameMap.contains(m_blockFlagList[j]))
+								{
+									info.propertymap.append(QPair<QString,QString>(m_blockFlagToNameMap[m_blockFlagList[j]],"false"));
+								}
+							}
+						}
+						parent = ((unsigned char)parsedPacket.payload[2]) << 8;
+						parent += (unsigned char)parsedPacket.payload[3];
+						rampage = (unsigned char)parsedPacket.payload[4];
+						flashpage = (unsigned char)parsedPacket.payload[5];
+						ramaddress = ((unsigned char)parsedPacket.payload[6]) << 8;
+						ramaddress += (unsigned char)parsedPacket.payload[7];
+						flashaddress = ((unsigned char)parsedPacket.payload[8]) << 8;
+						flashaddress += (unsigned char)parsedPacket.payload[9];
+						size = ((unsigned char)parsedPacket.payload[10]) << 8;
+						size += (unsigned char)parsedPacket.payload[11];
+						//descid = ((unsigned char)parsedPacket.payload[12]) << 8;
+						//descid += (unsigned char)parsedPacket.payload[13];
+						descid = (unsigned char)parsedPacket.payload[12];
+
+						//info.locationid = locationid;
+						info.parent = parent;
+						info.ramaddress = ramaddress;
+						info.rampage = rampage;
+						info.flashaddress = flashaddress;
+						info.flashpage = flashpage;
+						info.rawflags = test;
+						info.size = size;
+						info.descid = descid;
+
+						info.propertymap.append(QPair<QString,QString>("parent","0x" + QString::number(parent,16).toUpper()));
+						info.propertymap.append(QPair<QString,QString>("rampage","0x" + QString::number(rampage,16).toUpper()));
+						info.propertymap.append(QPair<QString,QString>("flashpage","0x" + QString::number(flashpage,16).toUpper()));
+						info.propertymap.append(QPair<QString,QString>("ramaddress","0x" + QString::number(ramaddress,16).toUpper()));
+						info.propertymap.append(QPair<QString,QString>("flashaddress","0x" + QString::number(flashaddress,16).toUpper()));
+						info.propertymap.append(QPair<QString,QString>("size","0x" + QString::number(size,16).toUpper()));
+
+						if (flaglist.contains(BLOCK_IS_RAM))
+						{
+							info.isRam = true;
 						}
 						else
 						{
-							if (m_blockFlagToNameMap.contains(m_blockFlagList[j]))
-							{
-								info.propertymap.append(QPair<QString,QString>(m_blockFlagToNameMap[m_blockFlagList[j]],"false"));
-							}
+							info.isRam = false;
 						}
-					}
-					parent = ((unsigned char)parsedPacket.payload[2]) << 8;
-					parent += (unsigned char)parsedPacket.payload[3];
-					rampage = (unsigned char)parsedPacket.payload[4];
-					flashpage = (unsigned char)parsedPacket.payload[5];
-					ramaddress = ((unsigned char)parsedPacket.payload[6]) << 8;
-					ramaddress += (unsigned char)parsedPacket.payload[7];
-					flashaddress = ((unsigned char)parsedPacket.payload[8]) << 8;
-					flashaddress += (unsigned char)parsedPacket.payload[9];
-					size = ((unsigned char)parsedPacket.payload[10]) << 8;
-					size += (unsigned char)parsedPacket.payload[11];
-					//descid = ((unsigned char)parsedPacket.payload[12]) << 8;
-					//descid += (unsigned char)parsedPacket.payload[13];
-					descid = (unsigned char)parsedPacket.payload[12];
+						if (flaglist.contains(BLOCK_IS_FLASH))
+						{
+							info.isFlash = true;
+						}
+						else
+						{
+							info.isFlash = false;
+						}
+						if (flaglist.contains(BLOCK_HAS_PARENT))
+						{
+							info.hasParent = true;
+						}
+						else
+						{
+							info.hasParent = false;
+						}
+						if (flaglist.contains(BLOCK_IS_READ_ONLY))
+						{
+							info.isReadOnly = true;
+						}
+						QString flags = "flags for table: " + QString::number(info.ramaddress,16).toUpper() + " : ";
+						for (int i=0;i<flaglist.size();i++)
+						{
+							flags += QString::number(flaglist.at(i),16).toUpper() + ",";
+						}
+						qDebug() << flags;
+						if (flaglist.contains(BLOCK_SPARE_10))
+						{
+							info.type = DATA_TABLE;
+						}
+						else if (flaglist.contains(BLOCK_IS_2D_TABLE))
+						{
+							info.type = DATA_TABLE;
+						}
+						else if (flaglist.contains(BLOCK_IS_2D_SIGNED_TABLE))
+						{
+							info.type = DATA_TABLE;
+						}
+						else if (flaglist.contains(BLOCK_IS_MAIN_TABLE))
+						{
+							//info.type = DATA_TABLE_3D;
+							info.type = DATA_TABLE;
+						}
+						else if (flaglist.contains(BLOCK_IS_CONFIGURATION))
+						{
+							info.type = DATA_CONFIG;
+						}
+						else if (flaglist.contains(BLOCK_IS_LOOKUP_DATA))
+						{
+							info.type = DATA_TABLE_LOOKUP;
+						}
+						else
+						{
+							info.type = DATA_UNDEFINED;
+						}
+						emit locationIdInfo(info);
+						//emsData.passLocationInfo(locationid,info);
 
-					//info.locationid = locationid;
-					info.parent = parent;
-					info.ramaddress = ramaddress;
-					info.rampage = rampage;
-					info.flashaddress = flashaddress;
-					info.flashpage = flashpage;
-					info.rawflags = test;
-					info.size = size;
-					info.descid = descid;
+					}
 
-					info.propertymap.append(QPair<QString,QString>("parent","0x" + QString::number(parent,16).toUpper()));
-					info.propertymap.append(QPair<QString,QString>("rampage","0x" + QString::number(rampage,16).toUpper()));
-					info.propertymap.append(QPair<QString,QString>("flashpage","0x" + QString::number(flashpage,16).toUpper()));
-					info.propertymap.append(QPair<QString,QString>("ramaddress","0x" + QString::number(ramaddress,16).toUpper()));
-					info.propertymap.append(QPair<QString,QString>("flashaddress","0x" + QString::number(flashaddress,16).toUpper()));
-					info.propertymap.append(QPair<QString,QString>("size","0x" + QString::number(size,16).toUpper()));
-
-					if (flaglist.contains(BLOCK_IS_RAM))
-					{
-						info.isRam = true;
-					}
-					else
-					{
-						info.isRam = false;
-					}
-					if (flaglist.contains(BLOCK_IS_FLASH))
-					{
-						info.isFlash = true;
-					}
-					else
-					{
-						info.isFlash = false;
-					}
-					if (flaglist.contains(BLOCK_HAS_PARENT))
-					{
-						info.hasParent = true;
-					}
-					else
-					{
-						info.hasParent = false;
-					}
-					if (flaglist.contains(BLOCK_IS_READ_ONLY))
-					{
-						info.isReadOnly = true;
-					}
-					QString flags = "flags for table: " + QString::number(info.ramaddress,16).toUpper() + " : ";
-					for (int i=0;i<flaglist.size();i++)
-					{
-						flags += QString::number(flaglist.at(i),16).toUpper() + ",";
-					}
-					qDebug() << flags;
-					if (flaglist.contains(BLOCK_SPARE_10))
-					{
-						info.type = DATA_TABLE;
-					}
-					else if (flaglist.contains(BLOCK_IS_2D_TABLE))
-					{
-						info.type = DATA_TABLE;
-					}
-					else if (flaglist.contains(BLOCK_IS_2D_SIGNED_TABLE))
-					{
-						info.type = DATA_TABLE;
-					}
-					else if (flaglist.contains(BLOCK_IS_MAIN_TABLE))
-					{
-						//info.type = DATA_TABLE_3D;
-						info.type = DATA_TABLE;
-					}
-					else if (flaglist.contains(BLOCK_IS_CONFIGURATION))
-					{
-						info.type = DATA_CONFIG;
-					}
-					else if (flaglist.contains(BLOCK_IS_LOOKUP_DATA))
-					{
-						info.type = DATA_TABLE_LOOKUP;
-					}
-					else
-					{
-						info.type = DATA_UNDEFINED;
-					}
-					emit locationIdInfo(info);
-					//emsData.passLocationInfo(locationid,info);
 
 				}
-
-
+				break;
 			}
-		}
-		else if (payloadid == 0x0001) //Interface version response
-		{
-			//Handle interface version
-			if (parsedPacket.isNAK)
+			case GET_INTERFACE_VERSION: //Interface version response
 			{
-				//NAK
-				QLOG_ERROR() << "IFACE VERSION NAK";
-			}
-			else
-			{
-				emit interfaceVersion(QString(parsedPacket.payload));
-			}
-		}
-		else if (payloadid == 0x0003) //Firmware version response
-		{
-			if (parsedPacket.isNAK)
-			{
-				//NAK
-				QLOG_ERROR() << "FIRMWARE VERSION NAK";
-			}
-			else
-			{
-				emit firmwareVersion(QString(parsedPacket.payload));
-			}
-		}
-		else if (payloadid == 0x0107)
-		{
-			if (parsedPacket.isNAK)
-			{
-			}
-			else
-			{
-				//unsigned short locid = m_currentWaitingRequest.args[0].toUInt();
-				//emit flashBlockRetrieved(locid,parsedPacket.header,parsedPacket.payload);
-				//emsData.flashBlockUpdate(locid,parsedPacket.header,parsedPacket.payload);
-				emit flashBlockUpdatePacket(parsedPacket.header,parsedPacket.payload);
-			}
-		}
-		else if (payloadid == 0x0105)
-		{
-			if (parsedPacket.isNAK)
-			{
-			}
-			else
-			{
-				//Block from ram is here.
-				//unsigned short locid = m_currentWaitingRequest.args[0].toUInt();
-				//emit ramBlockRetrieved(locid,parsedPacket.header,parsedPacket.payload);
-				//emsData.ramBlockUpdate(locid,parsedPacket.header,parsedPacket.payload);
-				emit ramBlockUpdatePacket(parsedPacket.header,parsedPacket.payload);
-			}
-		}
-		else if (payloadid == 0x0301)
-		{
-			qDebug() << "Datalog info packet:" << parsedPacket.header.toHex();
-			if (!isPartialPacketWaiting)
-			{
-				isPartialPacketWaiting = true;
-				m_partialPacketBuffer.clear();
-				m_currentPartialPacketSequence = parsedPacket.partialSequence-1;
-			}
-			if (m_currentPartialPacketSequence != parsedPacket.partialSequence-1)
-			{
-				//Current is not directly after!!!
-			}
-			m_partialPacketBuffer.append(parsedPacket.payload);
-			m_currentPartialPacketSequence = parsedPacket.partialSequence;
-			if (parsedPacket.isComplete)
-			{
-				//Final in sequence
-				emit datalogDescriptor(m_partialPacketBuffer);
-				isPartialPacketWaiting=false;
-			}
-
-		}
-		else if (payloadid == 0x030D)
-		{
-			qDebug() << "Field Descriptor packet:" << parsedPacket.header.toHex();
-			//Field descriptor
-			if (!isPartialPacketWaiting)
-			{
-				isPartialPacketWaiting = true;
-				m_partialPacketBuffer.clear();
-				m_currentPartialPacketSequence = parsedPacket.partialSequence-1;
-			}
-			if (m_currentPartialPacketSequence != parsedPacket.partialSequence-1)
-			{
-				//Current is not directly after!!!
-			}
-			m_partialPacketBuffer.append(parsedPacket.payload);
-			m_currentPartialPacketSequence = parsedPacket.partialSequence;
-			if (parsedPacket.isComplete)
-			{
-				//Final in sequence
-				emit fieldDescriptor(m_partialPacketBuffer);
-				isPartialPacketWaiting=false;
-			}
-		}
-		else if (payloadid == 0x030F)
-		{
-			qDebug() << "Table Descriptor packet:" << parsedPacket.header.toHex();
-			//Field descriptor
-			if (!isPartialPacketWaiting)
-			{
-				isPartialPacketWaiting = true;
-				m_partialPacketBuffer.clear();
-				m_currentPartialPacketSequence = parsedPacket.partialSequence-1;
-			}
-			if (m_currentPartialPacketSequence != parsedPacket.partialSequence-1)
-			{
-				//Current is not directly after!!!
-			}
-			m_partialPacketBuffer.append(parsedPacket.payload);
-			m_currentPartialPacketSequence = parsedPacket.partialSequence;
-			if (parsedPacket.isComplete)
-			{
-				//Final in sequence
-				emit tableDescriptor(m_partialPacketBuffer);
-
-				//QFile jsonfile("C:\\Users\Michael\\EMStudio\\logs\\2016.01.11-05.28.15.tables.json");
-				//jsonfile.open(QIODevice::ReadOnly);
-				//jsonfile.write(json.toLatin1());
-				//QByteArray partial = jsonfile.readAll();
-				//jsonfile.close();
-				//emit tableDescriptor(partial);
-				isPartialPacketWaiting=false;
-			}
-		}
-		else if (payloadid == BENCHTEST+1)
-		{
-			if (!parsedPacket.isNAK)
-			{
-				if (parsedPacket.payload.size() == 3)
+				//Handle interface version
+				if (parsedPacket.isNAK)
 				{
-					unsigned short count = 0;
-					count += ((unsigned char)parsedPacket.payload.at(0)) << 8;
-					count += ((unsigned char)parsedPacket.payload.at(1));
-					unsigned char event = 0;
-					event = ((unsigned char)parsedPacket.payload.at(2));
-					emit benchTestReply(count,event);
+					//NAK
+					QLOG_ERROR() << "IFACE VERSION NAK";
 				}
+				else
+				{
+					emit interfaceVersion(QString(parsedPacket.payload));
+				}
+				break;
 			}
-		}
-		else if (payloadid == 0x000F)
-		{
-			if (parsedPacket.isNAK)
+			case GET_FIRMWARE_VERSION: //Firmware version response
 			{
-				//NAK
-				QLOG_ERROR() << "FIRMWARE DEBUG NAK";
+				if (parsedPacket.isNAK)
+				{
+					//NAK
+					QLOG_ERROR() << "FIRMWARE VERSION NAK";
+				}
+				else
+				{
+					emit firmwareVersion(QString(parsedPacket.payload));
+				}
+				break;
 			}
-			else
+			case RETRIEVE_BLOCK_IN_FLASH:
 			{
-				emit firmwareDebug(QString(parsedPacket.payload));
+				if (parsedPacket.isNAK)
+				{
+				}
+				else
+				{
+					//unsigned short locid = m_currentWaitingRequest.args[0].toUInt();
+					//emit flashBlockRetrieved(locid,parsedPacket.header,parsedPacket.payload);
+					//emsData.flashBlockUpdate(locid,parsedPacket.header,parsedPacket.payload);
+					emit flashBlockUpdatePacket(parsedPacket.header,parsedPacket.payload);
+				}
+				break;
+
+			}
+			case RETRIEVE_BLOCK_IN_RAM:
+			{
+				if (parsedPacket.isNAK)
+				{
+				}
+				else
+				{
+					//Block from ram is here.
+					//unsigned short locid = m_currentWaitingRequest.args[0].toUInt();
+					//emit ramBlockRetrieved(locid,parsedPacket.header,parsedPacket.payload);
+					//emsData.ramBlockUpdate(locid,parsedPacket.header,parsedPacket.payload);
+					emit ramBlockUpdatePacket(parsedPacket.header,parsedPacket.payload);
+				}
+				break;
+			}
+			case GET_DATALOG_DESCRIPTOR:
+			{
+				qDebug() << "Datalog info packet:" << parsedPacket.header.toHex();
+				if (!isPartialPacketWaiting)
+				{
+					isPartialPacketWaiting = true;
+					m_partialPacketBuffer.clear();
+					m_currentPartialPacketSequence = parsedPacket.partialSequence-1;
+				}
+				if (m_currentPartialPacketSequence != parsedPacket.partialSequence-1)
+				{
+					//Current is not directly after!!!
+				}
+				m_partialPacketBuffer.append(parsedPacket.payload);
+				m_currentPartialPacketSequence = parsedPacket.partialSequence;
+				if (parsedPacket.isComplete)
+				{
+					//Final in sequence
+					emit datalogDescriptor(m_partialPacketBuffer);
+					isPartialPacketWaiting=false;
+				}
+				break;
+			}
+			case GET_FIELD_DESCRIPTOR:
+			{
+				qDebug() << "Field Descriptor packet:" << parsedPacket.header.toHex();
+				//Field descriptor
+				if (!isPartialPacketWaiting)
+				{
+					isPartialPacketWaiting = true;
+					m_partialPacketBuffer.clear();
+					m_currentPartialPacketSequence = parsedPacket.partialSequence-1;
+				}
+				if (m_currentPartialPacketSequence != parsedPacket.partialSequence-1)
+				{
+					//Current is not directly after!!!
+				}
+				m_partialPacketBuffer.append(parsedPacket.payload);
+				m_currentPartialPacketSequence = parsedPacket.partialSequence;
+				if (parsedPacket.isComplete)
+				{
+					//Final in sequence
+					emit fieldDescriptor(m_partialPacketBuffer);
+					isPartialPacketWaiting=false;
+				}
+				break;
+			}
+			case RETRIEVE_JSON_TABLE_DESCRIPTOR:
+			{
+				qDebug() << "Table Descriptor packet:" << parsedPacket.header.toHex();
+				//Field descriptor
+				if (!isPartialPacketWaiting)
+				{
+					isPartialPacketWaiting = true;
+					m_partialPacketBuffer.clear();
+					m_currentPartialPacketSequence = parsedPacket.partialSequence-1;
+				}
+				if (m_currentPartialPacketSequence != parsedPacket.partialSequence-1)
+				{
+					//Current is not directly after!!!
+				}
+				m_partialPacketBuffer.append(parsedPacket.payload);
+				m_currentPartialPacketSequence = parsedPacket.partialSequence;
+				if (parsedPacket.isComplete)
+				{
+					//Final in sequence
+					emit tableDescriptor(m_partialPacketBuffer);
+
+					//QFile jsonfile("C:\\Users\Michael\\EMStudio\\logs\\2016.01.11-05.28.15.tables.json");
+					//jsonfile.open(QIODevice::ReadOnly);
+					//jsonfile.write(json.toLatin1());
+					//QByteArray partial = jsonfile.readAll();
+					//jsonfile.close();
+					//emit tableDescriptor(partial);
+					isPartialPacketWaiting=false;
+				}
+				break;
+			}
+			case BENCHTEST:
+			{
+				if (!parsedPacket.isNAK)
+				{
+					if (parsedPacket.payload.size() == 3)
+					{
+						unsigned short count = 0;
+						count += ((unsigned char)parsedPacket.payload.at(0)) << 8;
+						count += ((unsigned char)parsedPacket.payload.at(1));
+						unsigned char event = 0;
+						event = ((unsigned char)parsedPacket.payload.at(2));
+						emit benchTestReply(count,event);
+					}
+				}
+				break;
+			}
+			case FIRMWARE_DEBUG:
+			{
+				if (parsedPacket.isNAK)
+				{
+					//NAK
+					QLOG_ERROR() << "FIRMWARE DEBUG NAK";
+				}
+				else
+				{
+					emit firmwareDebug(QString(parsedPacket.payload));
+				}
+				break;
+			}
+			default:
+			{
+				emit unknownPacket(parsedPacket.header,parsedPacket.payload);
+				break;
 			}
 		}
-		else
-		{
-			emit unknownPacket(parsedPacket.header,parsedPacket.payload);
-		}
-		if (payloadid == 0x0191 || payloadid == 0x000F)
+
+		if (payloadid == DATALOG_PACKET || payloadid == FIRMWARE_DEBUG)
 		{
 			//m_lastDatalogUpdateEnabled = true;
 			//m_lastDatalogTime = QDateTime::currentMSecsSinceEpoch();
@@ -620,22 +642,22 @@ void PacketDecoder::parsePacket(Packet parsedPacket)
 			{
 				unsigned short errornum = ((unsigned char)parsedPacket.payload[0]) << 8;
 				errornum += ((unsigned char)parsedPacket.payload[1]);
-				emit packetNaked(payloadid,parsedPacket.header,parsedPacket.payload,errornum);
+				emit packetNaked(payloadid+1,parsedPacket.header,parsedPacket.payload,errornum);
 				return;
 			}
 			if (parsedPacket.isPartial)
 			{
 				qDebug() << "Partial packet";
-				emit partialPacketAcked(payloadid,parsedPacket.header,parsedPacket.payload);
+				emit partialPacketAcked(payloadid+1,parsedPacket.header,parsedPacket.payload);
 			}
 			else if (parsedPacket.isComplete)
 			{
 				qDebug() << "Completed packet";
-				emit completePacketAcked(payloadid,parsedPacket.header,parsedPacket.payload);
+				emit completePacketAcked(payloadid+1,parsedPacket.header,parsedPacket.payload);
 			}
 			else
 			{
-				emit packetAcked(payloadid,parsedPacket.header,parsedPacket.payload);
+				emit packetAcked(payloadid+1,parsedPacket.header,parsedPacket.payload);
 			}
 
 		}
