@@ -225,8 +225,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 	gaugesMdiWindow->hide();
 	gaugesMdiWindow->setWindowTitle(dataGauges->windowTitle());
 
-	loadDashboards("src/");
-	loadDashboards(".");
+	loadDashboards("src/qml");
+	loadDashboards("./qml");
 	loadDashboards(EMSCore::instance().getDefaultsDirectory() + "/" + "dashboards");
 
 	if (QFile::exists(EMSCore::instance().getDefaultsDirectory() + "/" + "dashboards/gauges.qml"))

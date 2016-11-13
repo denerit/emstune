@@ -1,4 +1,4 @@
-import QtQuick 2.7
+import QtQuick 2.3
 import GaugeImage 0.1
 import "WarningLabel"
 Rectangle {

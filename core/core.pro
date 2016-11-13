@@ -43,13 +43,16 @@ win32 {
 	DEFINES += INSTALL_PREFIX=$$PREFIX
 	target.path = $$PREFIX/bin
 	dashboard.path = $$PREFIX/share/emstudio/dashboards
-	dashboard.files += src/gauges.qml
+	dashboard.files += src/qml/gauges.qml
+	dashboard.files += src/qml/oniongauges.qml
 	warninglabel.path = $$PREFIX/share/emstudio/dashboards/WarningLabel
-	warninglabel.files += src/WarningLabel/WarningLabel.qml
+	warninglabel.files += src/qml/WarningLabel/WarningLabel.qml
 	wizards.path = $$PREFIX/share/emstudio/wizards
-	wizards.files += wizards/BenchTest.qml
-	wizards.files += wizards/DecoderOffset.qml
-	wizards.files += wizards/wizard.qml
+	wizards.files += src/qml/wizards/ActualDecoderOffset.qml
+	wizards.files += src/qml/wizards/BenchTest.qml
+	wizards.files += src/qml/wizards/DecoderOffset.qml
+	wizards.files += src/qml/wizards/EngineConfig.qml
+	wizards.files += src/qml/wizards/wizard.qml
 	config.path = $$PREFIX/share/emstudio/definitions
 	config.files += libreems.config.json
 	INSTALLS += target config dashboard wizards warninglabel
@@ -181,9 +184,11 @@ FORMS    += src/mainwindow.ui \
 SUBDIRS += plugins
 OTHER_FILES += \
 	README.md \
-	wizards/BenchTest.qml \
-	wizards/DecoderOffset.qml \
-	wizards/wizard.qml \
-	wizards/EngineConfig.qml \
-	wizards/ActualDecoderOffset.qml \
-	src/WarningLabel/WarningLabel.qml
+	src/qml/wizards/BenchTest.qml \
+	src/qml/wizards/DecoderOffset.qml \
+	src/qml/wizards/wizard.qml \
+	src/qml/wizards/EngineConfig.qml \
+	src/qml/wizards/ActualDecoderOffset.qml \
+	src/qml/WarningLabel/WarningLabel.qml \
+	src/qml/gauges.qml \
+	src/qml/oniongauges.qml
