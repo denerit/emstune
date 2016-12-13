@@ -24,6 +24,7 @@ void ComboParam::setConfig(ConfigData *data)
 	ui->comboBox->addItems(data->getEnumValues());
 	ui->comboBox->setCurrentIndex(data->value().toInt());
 	m_data = data;
+	connect(data,SIGNAL(update()),this,SLOT(dataUpdate()));
 	connect(ui->comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(currentIndexChanged(int)));
 }
 
