@@ -82,6 +82,7 @@ public:
 	Q_INVOKABLE int startBenchTest(unsigned char eventspercycle,unsigned short numcycles,unsigned short ticksperevent,QVariantList pineventmask,QVariantList pinmode);
 	Q_INVOKABLE int stopBenchTest();
 	Q_INVOKABLE int bumpBenchTest(unsigned char cyclenum);
+	Q_INVOKABLE int sendCustomPacket(QVariantList values,QVariantList size);
 	int getLocationIdList(unsigned char listtype, unsigned short listmask);
 	int softReset();
 	int hardReset();

@@ -191,4 +191,6 @@ OTHER_FILES += \
 	src/qml/wizards/ActualDecoderOffset.qml \
 	src/qml/WarningLabel/WarningLabel.qml \
 	src/qml/gauges.qml \
-	src/qml/oniongauges.qml
+	src/qml/oniongauges.qml \
+	src/qml/wizards/OutputChannelTest.qml
+

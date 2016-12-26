@@ -879,6 +879,28 @@ int FreeEmsComms::echoPacket(QByteArray packet)
 	sendPacket(req);
 	return m_sequenceNumber-1;
 }
+int FreeEmsComms::sendCustomPacket(QVariantList values,QVariantList size)
+{
+	//in this case, values[0] is payloadid,
+	//values[1-(N-1)] are the packet bytes to send
+	//This includes length,
+	if (values.size() <= 1)
+	{
+		return -1;
+	}
+	unsigned short payloadid = (unsigned short)values.at(0).toInt();
+	//bool FreeEmsComms::sendPacket(unsigned short payloadid,QList<QVariant> arglist,QList<int> argsizelist,bool haslength)
+	values.removeAt(0);
+	size.removeAt(0);
+	QList<int> sizelist;
+	for (int i=0;i<size.size();i++)
+	{
+		sizelist.append(size.at(i).toInt());
+	}
+	return sendPacket(payloadid,values,sizelist,true);
+
+}
+
 int FreeEmsComms::startBenchTest(unsigned char eventspercycle,unsigned short numcycles,unsigned short ticksperevent,QVariantList pineventmask,QVariantList pinmode)
 {
 	RequestClass req;

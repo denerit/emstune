@@ -1322,6 +1322,10 @@ void MainWindow::emsCommsConnected()
 	interrogateProgressMdiWindow->show();
 	progressView->addOutput("Connected to EMS");
 	emsComms->startInterrogation();
+
+	loadWizards(m_defaultsDir + "/wizards");
+	loadWizards("src/qml/wizards");
+	loadWizards(m_localHomeDir + "/wizards");
 }
 void MainWindow::interrogationProgress(int current, int total)
 {

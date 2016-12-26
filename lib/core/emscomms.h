@@ -103,6 +103,7 @@ public:
 	virtual int Q_INVOKABLE startBenchTest(unsigned char eventspercycle,unsigned short numcycles,unsigned short ticksperevent,QVariantList pineventmask,QVariantList pinmode)=0;
 	virtual int Q_INVOKABLE stopBenchTest()=0;
 	virtual int Q_INVOKABLE bumpBenchTest(unsigned char cyclenum)=0;
+	virtual int Q_INVOKABLE sendCustomPacket(QVariantList values,QVariantList size)=0;
 	virtual bool sendSimplePacket(unsigned short payload)=0;
 	virtual void connectSerial(QString port,int baud)=0;
 	virtual void disconnectSerial()=0;
