@@ -13,8 +13,9 @@ QByteArray ProtocolEncoder::encodePacket(unsigned short payloadid,QList<QVariant
 	QByteArray payload;
 	for (int i=0;i<arglist.size();i++)
 	{
-		if (arglist[i].type() == QVariant::Int)
+		if ((arglist[i].type() == QVariant::Int) || arglist[i].type() == QVariant::Double)
 		{
+			//We don't actually support doubles, but all numbers in QML are doubles... so parse as an integer.
 			if (argsizelist[i] == 1)
 			{
 				unsigned char arg = arglist[i].toInt();

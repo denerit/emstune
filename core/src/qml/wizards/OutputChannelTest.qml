@@ -236,11 +236,11 @@ Item {
                                 console.log("Capture Clicked");
                                 var valueArray = new Array()
                                 valueArray[0] = 0x8892;
-                                valueArray[1] = delaytext.text //Delay ticks 32bit
-                                valueArray[2] = runtimetext.text //Runtime ticks 16bits
-                                valueArray[3] = testintervaltext.text //test interval 16bits
-                                valueArray[4] = channeltext.text //Channel, 0-24
-                                valueArray[5] = numbereventstext.text //Number of events, 8bits
+                                valueArray[1] = parseInt(delaytext.text) //Delay ticks 32bit
+                                valueArray[2] = parseInt(runtimetext.text) //Runtime ticks 16bits
+                                valueArray[3] = parseInt(testintervaltext.text) //test interval 16bits
+                                valueArray[4] = parseInt(channeltext.text) //Channel, 0-24
+                                valueArray[5] = parseInt(numbereventstext.text) //Number of events, 8bits
                                 var sizeArray = new Array()
                                 sizeArray[0] = 2
                                 sizeArray[1] = 4;
