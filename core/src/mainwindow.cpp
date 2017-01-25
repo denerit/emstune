@@ -1323,9 +1323,11 @@ void MainWindow::emsCommsConnected()
 	progressView->addOutput("Connected to EMS");
 	emsComms->startInterrogation();
 
-//	loadWizards(m_defaultsDir + "/wizards");
 	loadWizards("src/qml/wizards");
-	//loadWizards(m_localHomeDir + "/wizards");
+	loadWizards("./qml/wizards");
+	loadWizards(EMSCore::instance().getDefaultsDirectory() + "/wizards");
+
+
 }
 void MainWindow::interrogationProgress(int current, int total)
 {
