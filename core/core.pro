@@ -6,7 +6,7 @@
 
 QT       += core gui opengl printsupport widgets quick qml
 
-TARGET = emstudio
+TARGET = emstune
 TEMPLATE = app
 INCLUDEPATH += src
 OBJECTS_DIR = obj
