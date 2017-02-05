@@ -164,7 +164,7 @@ private:
 	QString m_firmwareVersion;
 	QString m_interfaceVersion;
 	QFile *logfile;
-	QList<WizardView*> m_wizardList;
+	QList<QMdiSubWindow*> m_wizardList;
 	bool m_debugLogs;
 	void createView(unsigned short locid,FormatType type);
 	int m_interrogationFailureCount;

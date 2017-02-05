@@ -1258,8 +1258,12 @@ void MainWindow::loadWizards(QString dir)
 		if (file.endsWith(".qml"))
 		{
 			WizardView *view = new WizardView();
+			QMdiSubWindow *subwin = ui.mdiArea->addSubWindow(view);
+			subwin->setGeometry(view->geometry());
+			subwin->hide();
+			subwin->setWindowTitle(view->windowTitle());
 			connect(emsComms,SIGNAL(configRecieved(ConfigBlock,QVariant)),view,SLOT(configRecieved(ConfigBlock,QVariant)),Qt::QueuedConnection);
-			m_wizardList.append(view);
+			m_wizardList.append(subwin);
 			for (int i=0;i<emsComms->getConfigList().size();i++)
 			{
 				view->addConfig(emsComms->getConfigList()[i],emsComms->getConfigData(emsComms->getConfigList()[i]));
@@ -1271,7 +1275,7 @@ void MainWindow::loadWizards(QString dir)
 			action->setText(file.mid(0,file.lastIndexOf(".")));
 			action->setCheckable(true);
 			ui.menuWizards->addAction(action);
-			connect(action,SIGNAL(triggered(bool)),view,SLOT(setVisible(bool)));
+			connect(action,SIGNAL(triggered(bool)),subwin,SLOT(setVisible(bool)));
 			connect(view,SIGNAL(visibilityChanged(bool)),action,SLOT(setChecked(bool)));
 		}
 	}

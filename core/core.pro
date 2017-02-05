@@ -93,7 +93,6 @@ SOURCES += src/main.cpp\
 	src/tablewidgetdelegate.cpp \
 	src/parameterview.cpp \
 	src/parameterwidget.cpp \
-	src/wizardview.cpp \
 	src/firmwaremetadata.cpp \
 	src/abstractgaugeitem.cpp \
 	src/bargaugeitem.cpp \
@@ -106,7 +105,9 @@ SOURCES += src/main.cpp\
 	src/tableviewnew3d.cpp \
 	src/pluginmanager.cpp \
 	src/firmwaredebugview.cpp \
-	src/emscore.cpp
+	src/emscore.cpp \
+	src/wizardwidget.cpp \
+	src/wizardview.cpp
 
 
 HEADERS  += src/mainwindow.h \
@@ -139,7 +140,6 @@ HEADERS  += src/mainwindow.h \
 	src/tablewidgetdelegate.h \
 	src/parameterview.h \
 	src/parameterwidget.h \
-	src/wizardview.h \
 	src/firmwaremetadata.h \
 	src/abstractgaugeitem.h \
 	src/bargaugeitem.h \
@@ -154,7 +154,9 @@ HEADERS  += src/mainwindow.h \
 	src/qcustomplot.h \
 	src/pluginmanager.h \
 	src/firmwaredebugview.h \
-	src/emscore.h
+	src/emscore.h \
+	src/wizardwidget.h \
+	src/wizardview.h
 
 FORMS    += src/mainwindow.ui \
 	src/comsettings.ui \
