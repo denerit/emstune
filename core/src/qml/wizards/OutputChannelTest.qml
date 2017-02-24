@@ -37,6 +37,7 @@ Item {
                     height:230
                     color:"white"
                     wrapMode: Text.WordWrap
+                    font.pointSize: 20
                     //horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                     text: "Informative text on what to do, TBD by Sean Keys"
@@ -60,41 +61,46 @@ Item {
                      //   x:10
                 //           y:240
 
-                        width:200
-                        height:30
+                        width:300
+                        height:40
                         color: "white"
+                        font.pointSize: 20
                         text: "Delay Ticks (1-2.4billion)"
                     }
                     Text {
                         //x:370
                         //y:240
                         width:100
-                        height:30
+                        height:40
                         color: "white"
+                        font.pointSize: 20
                         text: "Runtime Ticks (0-65535)"
                     }
                     Text {
                         //x:10
                         //y:280
                         width:100
-                        height:30
+                        height:40
                         color: "white"
+                        font.pointSize: 20
                         text: "Test Interval (0-65535)"
                     }
                     Text {
                         //x:10
                         //y:340
                         width:100
-                        height:30
+                        height:40
                         color: "white"
+                        font.pointSize: 20
                         text: "Channel (0-24):"
                     }
                     Text {
                         //x:10
                         //y:340
                         width:100
-                        height:30
+                        height:40
                         color: "white"
+                        font.pointSize: 20
                         text: "Number of events (0-255)"
                     }
 
@@ -105,18 +111,19 @@ Item {
                        // x:250
                        // y:240
                         width:100
-                        height:30
+                        height:40
                         color:"white"
                         Rectangle {
                             x:2
                             y:2
                             width:96
-                            height:26
+                            height:36
                             color:"grey"
                             TextEdit {
                                 id: delaytext
                                 anchors.fill:parent
                                 color: "white"
+                                font.pointSize: 20
                                 text:"1000"
                             }
                         }
@@ -125,18 +132,19 @@ Item {
                         //x:600
                         //y:240
                         width:100
-                        height:30
+                        height:40
                         color:"white"
                         Rectangle {
                             x:2
                             y:2
                             width:96
-                            height:26
+                            height:36
                             color:"grey"
                             TextEdit {
                                 id: runtimetext
                                 anchors.fill:parent
                                 color: "white"
+                                font.pointSize: 20
                                 text:"1000"
                             }
                         }
@@ -145,18 +153,19 @@ Item {
                         //x:250
                         //y:280
                         width:100
-                        height:30
+                        height:40
                         color:"white"
                         Rectangle {
                             x:2
                             y:2
                             width:96
-                            height:26
+                            height:36
                             color:"grey"
                             TextEdit {
                                 id: testintervaltext
                                 anchors.fill:parent
                                 color: "white"
+                                font.pointSize: 20
                                 text:"1000"
                             }
                         }
@@ -165,18 +174,19 @@ Item {
                         //x:250
                         //y:340
                         width:100
-                        height:30
+                        height:40
                         color:"white"
                         Rectangle {
                             x:2
                             y:2
                             width:96
-                            height:26
+                            height:36
                             color:"grey"
                             TextEdit {
                                 id: channeltext
                                 anchors.fill:parent
                                 color: "white"
+                                font.pointSize: 20
                                 text:"10"
                             }
                         }
@@ -186,18 +196,19 @@ Item {
                         //x:250
                         //y:370
                         width:100
-                        height:30
+                        height:40
                         color:"white"
                         Rectangle {
                             x:2
                             y:2
                             width:96
-                            height:26
+                            height:36
                             color:"grey"
                             TextEdit {
                                 id: numbereventstext
                                 anchors.fill:parent
                                 color: "white"
+                                font.pointSize: 20
                                 text:"100"
                             }
                         }
@@ -229,6 +240,8 @@ Item {
                         anchors.fill: parent
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
+                        font.pointSize: 20
+                        color: "white"
                         text: "Start"
                         MouseArea {
                             anchors.fill: parent
